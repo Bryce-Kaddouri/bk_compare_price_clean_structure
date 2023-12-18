@@ -36,10 +36,7 @@ class HomeScreen extends StatelessWidget {
             ListTile(
               title: const Text('Products'),
               onTap: () {
-                /*Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const ProductScreen()),
-                );*/
+                Get.toNamed('/products');
               },
             ),
             ListTile(

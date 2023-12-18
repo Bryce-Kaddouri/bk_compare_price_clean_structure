@@ -10,6 +10,8 @@ import 'package:bk_compare_price_mvc/src/features/auth/data/repository/auth_repo
 import 'package:bk_compare_price_mvc/src/features/auth/presentation/provider/auth_provider.dart';
 import 'package:bk_compare_price_mvc/src/features/auth/presentation/screen/signin_screen.dart';
 import 'package:bk_compare_price_mvc/src/features/home/presentation/screen/home_screen.dart';
+import 'package:bk_compare_price_mvc/src/features/products/presentation/screen/add_product_screen.dart';
+import 'package:bk_compare_price_mvc/src/features/products/presentation/screen/products_screen.dart';
 import 'package:bk_compare_price_mvc/src/features/suppliers/business/repository/supplier_repository.dart';
 import 'package:bk_compare_price_mvc/src/features/suppliers/business/usecase/add_supplier_usecase.dart';
 import 'package:bk_compare_price_mvc/src/features/suppliers/business/usecase/delete_supplier_usecase.dart';
@@ -95,6 +97,8 @@ class MyApp extends StatelessWidget {
         GetPage(name: '/suppliers/add', page: () => const AddSupplierScreen()),
         GetPage(name: '/suppliers/add/upload-image/:id', page: () => UploadingScreen(supplierId: Get.parameters['id']!)),
         GetPage(name: '/suppliers/detail/:id', page: () => SupplierDetailScreen(supplierId: Get.parameters['id']!)),
+        GetPage(name: '/products', page: () => ProductsScreen()),
+        GetPage(name: '/products/add', page: () => AddProductScreen()),
 
       ],
       title: 'Flutter Demo',
