@@ -7,6 +7,7 @@ class PriceModel{
   final double price;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final DateTime dateTime;
 
   PriceModel({
     required this.id,
@@ -14,19 +15,23 @@ class PriceModel{
     required this.supplierId,
     required this.price,
     required this.createdAt,
-    required this.updatedAt
+    required this.updatedAt,
+    required this.dateTime
+
   });
 
-  factory PriceModel.fromDocumentSnapshot(DocumentSnapshot documentSnapshot){
+  factory PriceModel.fromDocument(DocumentSnapshot documentSnapshot){
     Timestamp createdAt = documentSnapshot['createdAt'];
     Timestamp updatedAt = documentSnapshot['updatedAt'];
+    Timestamp dateTime = documentSnapshot['dateTime'];
     return PriceModel(
       id: documentSnapshot.id,
       productId: documentSnapshot['productId'],
       supplierId: documentSnapshot['supplierId'],
       price: documentSnapshot['price'],
       createdAt: createdAt.toDate(),
-      updatedAt: updatedAt.toDate()
+      updatedAt: updatedAt.toDate(),
+      dateTime: dateTime.toDate()
     );
   }
 
@@ -36,7 +41,8 @@ class PriceModel{
       'supplierId': supplierId,
       'price': price,
       'createdAt': createdAt,
-      'updatedAt': updatedAt
+      'updatedAt': updatedAt,
+      'dateTime': dateTime
     };
   }
 

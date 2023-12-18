@@ -11,11 +11,14 @@ import 'package:bk_compare_price_mvc/src/features/auth/presentation/provider/aut
 import 'package:bk_compare_price_mvc/src/features/auth/presentation/screen/signin_screen.dart';
 import 'package:bk_compare_price_mvc/src/features/home/presentation/screen/home_screen.dart';
 import 'package:bk_compare_price_mvc/src/features/products/business/repository/product_repository.dart';
+import 'package:bk_compare_price_mvc/src/features/products/business/usecase/add_product_price_usecase.dart';
 import 'package:bk_compare_price_mvc/src/features/products/business/usecase/add_product_usecase.dart';
+import 'package:bk_compare_price_mvc/src/features/products/business/usecase/delete_product_price_usecase.dart';
 import 'package:bk_compare_price_mvc/src/features/products/business/usecase/delete_product_usecase.dart';
 import 'package:bk_compare_price_mvc/src/features/products/business/usecase/get_all_products_usecase.dart';
 import 'package:bk_compare_price_mvc/src/features/products/business/usecase/get_product_by_id_usecase.dart';
 import 'package:bk_compare_price_mvc/src/features/products/business/usecase/update_photo_url_usecase.dart';
+import 'package:bk_compare_price_mvc/src/features/products/business/usecase/update_poduct_price_usecase.dart';
 import 'package:bk_compare_price_mvc/src/features/products/business/usecase/update_product_usecase.dart';
 import 'package:bk_compare_price_mvc/src/features/products/business/usecase/upload_image_usecase.dart';
 import 'package:bk_compare_price_mvc/src/features/products/data/datasource/product_datasource.dart';
@@ -94,6 +97,7 @@ void main() async{
     )),
     ChangeNotifierProvider(create: (_)=>ProductProvider(
       addProductUseCase: AddProductUseCase(repository: productRepository), uploadImageUseCase: ProductUploadImageUseCase(repository: productRepository), getAllProductsUseCase: GetAllProductsUseCase(repository: productRepository), getProductByIdUseCase: GetProductByIdUseCase(repository: productRepository), updateProductUseCase: UpdateProductUseCase(repository: productRepository), deleteProductUseCase: DeleteProductUseCase(repository: productRepository), updatePhotoUrlUseCase: ProductUpdatePhotoUrlUseCase(repository: productRepository),
+      addProductPriceUseCase: AddProductPriceUseCase(repository: productRepository), deleteProductPriceUseCase: DeleteProductPriceUseCase(repository: productRepository), updateProductPriceUseCase: UpdateProductPriceUseCase(repository: productRepository),
     )),
   ], child: const MyApp()));
 }

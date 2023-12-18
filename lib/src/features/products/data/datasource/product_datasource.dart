@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:bk_compare_price_mvc/src/features/products/data/model/price_model.dart';
 import 'package:bk_compare_price_mvc/src/features/products/data/model/product_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -43,7 +44,20 @@ class ProductDataSource{
             .collection('products')
             .doc(id)
             .get();
-        return ProductModel.fromDocument(snapshot);
+        String productId = snapshot.id;
+        CollectionReference pricesRef = firestore
+            .collection('users')
+            .doc(user.uid)
+            .collection('products')
+            .doc(productId)
+            .collection('prices');
+        QuerySnapshot pricesSnapshot = await pricesRef.get();
+        List<PriceModel> prices = pricesSnapshot.docs
+            .map((e) => PriceModel.fromDocument(e))
+            .toList();
+        ProductModel product = ProductModel.fromDocument(snapshot);
+        product.setPrices = prices;
+        return product;
       }
       throw Exception('User is not logged in');
     } on FirebaseException catch (e) {
@@ -65,6 +79,65 @@ class ProductDataSource{
         return docRef.id;
       }
       throw Exception('User is not logged in');
+    } on FirebaseException catch (e) {
+      throw Exception(e.message);
+    }
+  }
+
+  Future<void> addPriceForProduct(String productId, PriceModel price) async{
+    try {
+      final user = auth.currentUser;
+      if (user != null) {
+        await firestore
+            .collection('users')
+            .doc(user.uid)
+            .collection('products')
+            .doc(productId)
+            .collection('prices')
+            .add(price.toMap());
+      }else{
+        throw Exception('User is not logged in');
+      }
+    } on FirebaseException catch (e) {
+      throw Exception(e.message);
+    }
+  }
+
+  Future<void> updateProductPrice(PriceModel price) async{
+    try {
+      final user = auth.currentUser;
+      if (user != null) {
+        await firestore
+            .collection('users')
+            .doc(user.uid)
+            .collection('products')
+            .doc(price.productId)
+            .collection('prices')
+            .doc(price.id)
+            .update(price.toMap());
+      }else{
+        throw Exception('User is not logged in');
+      }
+    } on FirebaseException catch (e) {
+      throw Exception(e.message);
+    }
+  }
+
+  Future<void> deleteProductPrice(PriceModel price) async{
+    try {
+      final user = auth.currentUser;
+      if (user != null) {
+        await firestore
+            .collection('users')
+            .doc(user.uid)
+            .collection('products')
+            .doc(price.productId)
+            .collection('prices')
+            .doc(price.id)
+            .delete();
+      }else{
+        throw Exception('User is not logged in');
+      }
     } on FirebaseException catch (e) {
       throw Exception(e.message);
     }
@@ -142,6 +215,25 @@ class ProductDataSource{
             .collection('products')
             .doc(productId)
             .update({'photoUrl': photoUrl});
+      }
+    } on FirebaseException catch (e) {
+      throw Exception(e.message);
+    }
+  }
+
+  Future<void> addProductPrice(PriceModel price) {
+    try {
+      final user = auth.currentUser;
+      if (user != null) {
+        return firestore
+            .collection('users')
+            .doc(user.uid)
+            .collection('products')
+            .doc(price.productId)
+            .collection('prices')
+            .add(price.toMap());
+      }else{
+        throw Exception('User is not logged in');
       }
     } on FirebaseException catch (e) {
       throw Exception(e.message);

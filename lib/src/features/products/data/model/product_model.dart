@@ -49,4 +49,9 @@ class ProductModel{
     }
     return prices.reduce((current, next) => current.updatedAt.isAfter(next.updatedAt) ? current : next);
   }
+
+  // setter for prices
+  set setPrices(List<PriceModel> prices){
+    this.prices.addAll(prices);
+  }
 }

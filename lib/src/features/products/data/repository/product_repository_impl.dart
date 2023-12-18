@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:bk_compare_price_mvc/src/features/products/data/model/price_model.dart';
 import 'package:bk_compare_price_mvc/src/features/products/data/model/product_model.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
@@ -46,6 +47,21 @@ class ProductRepositoryImpl implements ProductRepository {
   @override
   Future<void> updatePhotoUrl(String supplierId, String url) {
     return dataSource.updatePhotoUrl(supplierId, url);
+  }
+
+  @override
+  Future<void> addProductPrice(PriceModel price) {
+    return dataSource.addProductPrice(price);
+  }
+
+  @override
+  Future<void> deleteProductPrice(PriceModel price) {
+    return dataSource.deleteProductPrice(price);
+  }
+
+  @override
+  Future<void> updateProductPrice(PriceModel price) {
+    return dataSource.updateProductPrice(price);
   }
 
 }
