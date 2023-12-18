@@ -41,7 +41,7 @@ class _SuppliersScreenState extends State<SuppliersScreen> {
                 title: Text(supplierProvider.suppliers[index].name),
                 subtitle: Text(supplierProvider.suppliers[index].id),
                 onTap: (){
-                  Get.toNamed('/suppliers/detail/${supplierProvider.suppliers[index].id}', arguments: supplierProvider.suppliers[index].id);
+                  Get.toNamed('/suppliers/detail/${supplierProvider.suppliers[index].id}');
                 },
               );
             },

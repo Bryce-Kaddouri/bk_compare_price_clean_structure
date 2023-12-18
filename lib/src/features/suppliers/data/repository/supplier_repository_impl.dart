@@ -19,8 +19,7 @@ class SupplierRepositoryImpl extends SupplierRepository {
 
   @override
   Future<void> deleteSupplier(String id) {
-    // TODO: implement deleteSupplier
-    throw UnimplementedError();
+    return dataSource.deleteSupplierFromFireStore(id);
   }
 
   @override

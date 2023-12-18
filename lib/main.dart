@@ -10,8 +10,21 @@ import 'package:bk_compare_price_mvc/src/features/auth/data/repository/auth_repo
 import 'package:bk_compare_price_mvc/src/features/auth/presentation/provider/auth_provider.dart';
 import 'package:bk_compare_price_mvc/src/features/auth/presentation/screen/signin_screen.dart';
 import 'package:bk_compare_price_mvc/src/features/home/presentation/screen/home_screen.dart';
+import 'package:bk_compare_price_mvc/src/features/products/business/repository/product_repository.dart';
+import 'package:bk_compare_price_mvc/src/features/products/business/usecase/add_product_usecase.dart';
+import 'package:bk_compare_price_mvc/src/features/products/business/usecase/delete_product_usecase.dart';
+import 'package:bk_compare_price_mvc/src/features/products/business/usecase/get_all_products_usecase.dart';
+import 'package:bk_compare_price_mvc/src/features/products/business/usecase/get_product_by_id_usecase.dart';
+import 'package:bk_compare_price_mvc/src/features/products/business/usecase/update_photo_url_usecase.dart';
+import 'package:bk_compare_price_mvc/src/features/products/business/usecase/update_product_usecase.dart';
+import 'package:bk_compare_price_mvc/src/features/products/business/usecase/upload_image_usecase.dart';
+import 'package:bk_compare_price_mvc/src/features/products/data/datasource/product_datasource.dart';
+import 'package:bk_compare_price_mvc/src/features/products/data/repository/product_repository_impl.dart';
+import 'package:bk_compare_price_mvc/src/features/products/presentation/provider/product_provider.dart';
 import 'package:bk_compare_price_mvc/src/features/products/presentation/screen/add_product_screen.dart';
+import 'package:bk_compare_price_mvc/src/features/products/presentation/screen/product_detail_screen.dart';
 import 'package:bk_compare_price_mvc/src/features/products/presentation/screen/products_screen.dart';
+import 'package:bk_compare_price_mvc/src/features/products/presentation/screen/uploading_screen.dart';
 import 'package:bk_compare_price_mvc/src/features/suppliers/business/repository/supplier_repository.dart';
 import 'package:bk_compare_price_mvc/src/features/suppliers/business/usecase/add_supplier_usecase.dart';
 import 'package:bk_compare_price_mvc/src/features/suppliers/business/usecase/delete_supplier_usecase.dart';
@@ -52,6 +65,7 @@ void main() async{
 
   final AuthRepository authRepository = AuthRepositoryImpl(dataSource: AuthDataSource(auth: auth));
   final SupplierRepository supplierRepository = SupplierRepositoryImpl(dataSource: SupplierDataSource(firestore: firestore, storage: storage, auth: auth));
+  final ProductRepository productRepository = ProductRepositoryImpl(dataSource: ProductDataSource(firestore: firestore, storage: storage, auth: auth));
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(
       create: (_) => AuthenticationProvider(
@@ -78,6 +92,9 @@ void main() async{
         repository: supplierRepository
       ), uploadImageUseCase: UploadImageUseCase(repository: supplierRepository), getAllSuppliersUseCase: GetAllSupplierUseCase(repository: supplierRepository), getSupplierByIdUseCase: GetSupplierByIdUseCase(repository: supplierRepository), updateSupplierUseCase: UpdateSupplierUseCase(supplierRepository: supplierRepository), deleteSupplierUseCase: DeleteSupplierUseCase(supplierRepository: supplierRepository), updatePhotoUrlUseCase: UpdatePhotoUrlUseCase(repository: supplierRepository),
     )),
+    ChangeNotifierProvider(create: (_)=>ProductProvider(
+      addProductUseCase: AddProductUseCase(repository: productRepository), uploadImageUseCase: ProductUploadImageUseCase(repository: productRepository), getAllProductsUseCase: GetAllProductsUseCase(repository: productRepository), getProductByIdUseCase: GetProductByIdUseCase(repository: productRepository), updateProductUseCase: UpdateProductUseCase(repository: productRepository), deleteProductUseCase: DeleteProductUseCase(repository: productRepository), updatePhotoUrlUseCase: ProductUpdatePhotoUrlUseCase(repository: productRepository),
+    )),
   ], child: const MyApp()));
 }
 
@@ -99,6 +116,9 @@ class MyApp extends StatelessWidget {
         GetPage(name: '/suppliers/detail/:id', page: () => SupplierDetailScreen(supplierId: Get.parameters['id']!)),
         GetPage(name: '/products', page: () => ProductsScreen()),
         GetPage(name: '/products/add', page: () => AddProductScreen()),
+        GetPage(name: '/products/add/upload-image/:id', page: () => ProductUploadingScreen(productId: Get.parameters['id']!)),
+        GetPage(name: '/products/detail/:id', page: () => ProductDetailScreen(productId: Get.parameters['id']!)),
+
 
       ],
       title: 'Flutter Demo',
