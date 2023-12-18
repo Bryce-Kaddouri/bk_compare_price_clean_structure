@@ -8,6 +8,7 @@ class TextFieldWidget extends StatelessWidget {
   final bool obscureText;
   final TextInputType? keyboardType;
   bool showSuffixIcon = false;
+  bool isEnable = true;
 
   TextFieldWidget({
     Key? key,
@@ -17,11 +18,13 @@ class TextFieldWidget extends StatelessWidget {
     this.obscureText = false,
     this.keyboardType,
     this.showSuffixIcon = false,
+    this.isEnable = true,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      enabled: isEnable,
 
       validator: (value) {
         if (value == null || value.isEmpty) {

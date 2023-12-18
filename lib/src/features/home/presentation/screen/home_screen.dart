@@ -1,4 +1,6 @@
+import 'package:bk_compare_price_mvc/src/features/suppliers/presentation/screen/suppliers_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:provider/provider.dart';
 
@@ -28,10 +30,7 @@ class HomeScreen extends StatelessWidget {
             ListTile(
               title: const Text('Suppliers'),
               onTap: () {
-                /*Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const SupplierScreen()),
-                );*/
+                Get.toNamed('/suppliers');
               },
             ),
             ListTile(

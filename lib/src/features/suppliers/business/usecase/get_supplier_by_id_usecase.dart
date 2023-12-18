@@ -7,7 +7,7 @@ class GetSupplierByIdUseCase{
   GetSupplierByIdUseCase({required this.repository});
 
   @override
-  Future<SupplierModel> call(String id) async {
+  Future<SupplierModel?> call(String id) async {
     return await repository.getSupplierById(id);
   }
 }

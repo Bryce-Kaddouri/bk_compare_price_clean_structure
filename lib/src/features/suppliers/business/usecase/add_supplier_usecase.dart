@@ -6,8 +6,7 @@ class AddSupplierUseCase {
 
   AddSupplierUseCase({required this.repository});
 
-  @override
-  Future<void> call(SupplierModel supplier) async {
+  Future<String?> call(SupplierModel supplier) async {
     return await repository.addSupplier(supplier);
   }
 }

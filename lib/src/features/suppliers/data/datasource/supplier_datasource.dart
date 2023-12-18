@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
 
 import '../model/supplier_model.dart';
 
@@ -28,6 +29,7 @@ class SupplierDataSource{
     } on FirebaseException catch (e) {
       throw Exception(e.message);
     }
+    return null;
   }
 
   Future<void> updateSupplierToFireStore(SupplierModel supplier) async {
@@ -81,13 +83,60 @@ class SupplierDataSource{
     }
   }
 
-  UploadTask? uploadImageToStorage(File file) {
+  Future<SupplierModel?> getSupplierByIdFromFireStore(String id) async {
     try {
       final user = auth.currentUser;
       if (user != null) {
-        return storage
-            .ref('users/${user.uid}/suppliers/${file.path.split('/').last}')
-            .putFile(file);
+        DocumentSnapshot snapshot = await firestore
+            .collection('users')
+            .doc(user.uid)
+            .collection('suppliers')
+            .doc(id)
+            .get();
+        return SupplierModel.fromDocument(snapshot);
+      }
+      return null;
+    } on FirebaseException catch (e) {
+      throw Exception(e.message);
+    }
+  }
+
+  UploadTask? uploadImageToStorage(File? file, String supplierId, Uint8List? data) {
+    print('uploadImageToStorage');
+    try {
+      final user = auth.currentUser;
+      print('user: $user');
+      SettableMetadata metadata = SettableMetadata(
+        contentType: 'image/jpeg',
+      );
+      if (user != null) {
+        if(kIsWeb) {
+          print('data: $data');
+
+          return storage
+              .ref('users/${user.uid}/suppliers/$supplierId.jpg')
+              .putData(data!, metadata);
+        }else{
+          return storage
+              .ref('users/${user.uid}/suppliers/$supplierId.jpg')
+              .putFile(file!, metadata);
+        }
+      }
+    } on FirebaseException catch (e) {
+      throw Exception(e.message);
+    }
+  }
+
+  Future<void> updatePhotoUrl(String supplierId, String photoUrl) async{
+    try {
+      final user = auth.currentUser;
+      if (user != null) {
+        await firestore
+            .collection('users')
+            .doc(user.uid)
+            .collection('suppliers')
+            .doc(supplierId)
+            .update({'photoUrl': photoUrl});
       }
     } on FirebaseException catch (e) {
       throw Exception(e.message);
