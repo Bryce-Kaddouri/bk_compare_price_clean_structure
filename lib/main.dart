@@ -46,61 +46,88 @@ import 'package:bk_compare_price_mvc/src/features/suppliers/presentation/screen/
 import 'package:bk_compare_price_mvc/src/features/suppliers/presentation/screen/uploading_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_navigation/src/root/get_material_app.dart';
-import 'package:get/get_navigation/src/routes/get_route.dart';
 import 'package:provider/provider.dart';
-import 'package:firebase_core/firebase_core.dart';
 
 import 'firebase_options.dart';
 
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  
+
   final FirebaseAuth auth = FirebaseAuth.instance;
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
   final FirebaseStorage storage = FirebaseStorage.instance;
 
-  final AuthRepository authRepository = AuthRepositoryImpl(dataSource: AuthDataSource(auth: auth));
-  final SupplierRepository supplierRepository = SupplierRepositoryImpl(dataSource: SupplierDataSource(firestore: firestore, storage: storage, auth: auth));
-  final ProductRepository productRepository = ProductRepositoryImpl(dataSource: ProductDataSource(firestore: firestore, storage: storage, auth: auth));
+  final AuthRepository authRepository =
+      AuthRepositoryImpl(dataSource: AuthDataSource(auth: auth));
+  final SupplierRepository supplierRepository = SupplierRepositoryImpl(
+      dataSource: SupplierDataSource(
+          firestore: firestore, storage: storage, auth: auth));
+  final ProductRepository productRepository = ProductRepositoryImpl(
+      dataSource: ProductDataSource(
+          firestore: firestore, storage: storage, auth: auth));
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(
       create: (_) => AuthenticationProvider(
-        signupUseCase: SignupUsecase(
-          repository: authRepository
-        ),
-        signinUseCase: SigninUseCase(
-          repository: authRepository
-        ),
-        sendResetPasswordUseCase: SendResetPasswordUseCase(
-          repository: authRepository
-        ),
-        signoutUseCase: SignoutUseCase(
-          repository: authRepository
-        ),
-        getCurrentUserUseCase: GetCurrentUserUseCase(
-          repository: authRepository
-        ),
-
+        signupUseCase: SignupUsecase(repository: authRepository),
+        signinUseCase: SigninUseCase(repository: authRepository),
+        sendResetPasswordUseCase:
+            SendResetPasswordUseCase(repository: authRepository),
+        signoutUseCase: SignoutUseCase(repository: authRepository),
+        getCurrentUserUseCase:
+            GetCurrentUserUseCase(repository: authRepository),
       ),
     ),
-    ChangeNotifierProvider(create: (_)=>SupplierProvider(
-      addSupplierUseCase: AddSupplierUseCase(
-        repository: supplierRepository
-      ), uploadImageUseCase: UploadImageUseCase(repository: supplierRepository), getAllSuppliersUseCase: GetAllSupplierUseCase(repository: supplierRepository), getSupplierByIdUseCase: GetSupplierByIdUseCase(repository: supplierRepository), updateSupplierUseCase: UpdateSupplierUseCase(supplierRepository: supplierRepository), deleteSupplierUseCase: DeleteSupplierUseCase(supplierRepository: supplierRepository), updatePhotoUrlUseCase: UpdatePhotoUrlUseCase(repository: supplierRepository),
-    )),
-    ChangeNotifierProvider(create: (_)=>ProductProvider(
-      addProductUseCase: AddProductUseCase(repository: productRepository), uploadImageUseCase: ProductUploadImageUseCase(repository: productRepository), getAllProductsUseCase: GetAllProductsUseCase(repository: productRepository), getProductByIdUseCase: GetProductByIdUseCase(repository: productRepository), updateProductUseCase: UpdateProductUseCase(repository: productRepository), deleteProductUseCase: DeleteProductUseCase(repository: productRepository), updatePhotoUrlUseCase: ProductUpdatePhotoUrlUseCase(repository: productRepository),
-      addProductPriceUseCase: AddProductPriceUseCase(repository: productRepository), deleteProductPriceUseCase: DeleteProductPriceUseCase(repository: productRepository), updateProductPriceUseCase: UpdateProductPriceUseCase(repository: productRepository),
-    )),
-    ChangeNotifierProvider(create: (_)=>SearchProvider()),
+    ChangeNotifierProvider(
+        create: (_) => SupplierProvider(
+              addSupplierUseCase:
+                  AddSupplierUseCase(repository: supplierRepository),
+              uploadImageUseCase:
+                  UploadImageUseCase(repository: supplierRepository),
+              getAllSuppliersUseCase:
+                  GetAllSupplierUseCase(repository: supplierRepository),
+              getSupplierByIdUseCase:
+                  GetSupplierByIdUseCase(repository: supplierRepository),
+              updateSupplierUseCase:
+                  UpdateSupplierUseCase(supplierRepository: supplierRepository),
+              deleteSupplierUseCase:
+                  DeleteSupplierUseCase(supplierRepository: supplierRepository),
+              updatePhotoUrlUseCase:
+                  UpdatePhotoUrlUseCase(repository: supplierRepository),
+            )),
+    ChangeNotifierProvider(
+        create: (_) => ProductProvider(
+              addProductUseCase:
+                  AddProductUseCase(repository: productRepository),
+              uploadImageUseCase:
+                  ProductUploadImageUseCase(repository: productRepository),
+              getAllProductsUseCase:
+                  GetAllProductsUseCase(repository: productRepository),
+              getProductByIdUseCase:
+                  GetProductByIdUseCase(repository: productRepository),
+              updateProductUseCase:
+                  UpdateProductUseCase(repository: productRepository),
+              deleteProductUseCase:
+                  DeleteProductUseCase(repository: productRepository),
+              updatePhotoUrlUseCase:
+                  ProductUpdatePhotoUrlUseCase(repository: productRepository),
+              addProductPriceUseCase:
+                  AddProductPriceUseCase(repository: productRepository),
+              deleteProductPriceUseCase:
+                  DeleteProductPriceUseCase(repository: productRepository),
+              updateProductPriceUseCase:
+                  UpdateProductPriceUseCase(repository: productRepository),
+            )),
+    ChangeNotifierProvider(
+        create: (_) => SearchProvider(
+            getProductByIdUseCase:
+                GetProductByIdUseCase(repository: productRepository))),
   ], child: const MyApp()));
 }
 
@@ -118,18 +145,25 @@ class MyApp extends StatelessWidget {
         GetPage(name: '/reset-password', page: () => SigninScreen()),
         GetPage(name: '/suppliers', page: () => const SuppliersScreen()),
         GetPage(name: '/suppliers/add', page: () => const AddSupplierScreen()),
-        GetPage(name: '/suppliers/add/upload-image/:id', page: () => UploadingScreen(supplierId: Get.parameters['id']!)),
-        GetPage(name: '/suppliers/detail/:id', page: () => SupplierDetailScreen(supplierId: Get.parameters['id']!)),
+        GetPage(
+            name: '/suppliers/add/upload-image/:id',
+            page: () => UploadingScreen(supplierId: Get.parameters['id']!)),
+        GetPage(
+            name: '/suppliers/detail/:id',
+            page: () =>
+                SupplierDetailScreen(supplierId: Get.parameters['id']!)),
         GetPage(name: '/products', page: () => ProductsScreen()),
         GetPage(name: '/products/add', page: () => AddProductScreen()),
-        GetPage(name: '/products/add/upload-image/:id', page: () => ProductUploadingScreen(productId: Get.parameters['id']!)),
-        GetPage(name: '/products/detail/:id', page: () => ProductDetailScreen(productId: Get.parameters['id']!)),
-
-
+        GetPage(
+            name: '/products/add/upload-image/:id',
+            page: () =>
+                ProductUploadingScreen(productId: Get.parameters['id']!)),
+        GetPage(
+            name: '/products/detail/:id',
+            page: () => ProductDetailScreen(productId: Get.parameters['id']!)),
       ],
       title: 'Flutter Demo',
       theme: ThemeData(
-        
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
@@ -145,6 +179,6 @@ class MyApp extends StatelessWidget {
           }
         },
       ),
-      );
+    );
   }
 }

@@ -1,21 +1,38 @@
 import 'package:flutter/material.dart';
 
+import '../../../products/business/usecase/get_product_by_id_usecase.dart';
+import '../../../products/data/model/price_model.dart';
 import '../../../products/data/model/product_model.dart';
 
-class SearchProvider with ChangeNotifier{
-  SearchController _searchController = SearchController();
-  SearchController get searchController => _searchController;
-  set searchController(SearchController searchController){
-    _searchController = searchController;
-    notifyListeners();
-  }
+class SearchProvider with ChangeNotifier {
+  final GetProductByIdUseCase getProductByIdUseCase;
+
+  SearchProvider({required this.getProductByIdUseCase});
 
   ProductModel? _selectedProduct;
+
   ProductModel? get selectedProduct => _selectedProduct;
-  set selectedProduct(ProductModel? selectedProduct){
-    _selectedProduct = selectedProduct;
-    notifyListeners();
+
+  void getProductById(String productId) async {
+    ProductModel? product = await getProductByIdUseCase.call(productId);
+    if (product != null) {
+      setSelectedProduct(product);
+      List<PriceModel> prices = product.prices;
+      for (PriceModel price in prices) {
+        print('price: ${price.supplierId}');
+      }
+      // extract all suppliers
+      List<String> suppliers = [];
+      for (PriceModel price in prices) {
+        if (!suppliers.contains(price.supplierId)) {
+          suppliers.add(price.supplierId);
+        }
+      }
+    }
   }
 
-
+  void setSelectedProduct(ProductModel product) {
+    _selectedProduct = product;
+    notifyListeners();
+  }
 }

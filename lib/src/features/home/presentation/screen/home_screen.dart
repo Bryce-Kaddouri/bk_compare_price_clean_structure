@@ -1,9 +1,8 @@
+import 'package:bk_compare_price_mvc/src/features/search/presentation/provider/search_provider.dart';
 import 'package:bk_compare_price_mvc/src/features/search/presentation/widget/search_bar_widget.dart';
 import 'package:bk_compare_price_mvc/src/features/suppliers/presentation/provider/supplier_provider.dart';
-import 'package:bk_compare_price_mvc/src/features/suppliers/presentation/screen/suppliers_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:provider/provider.dart';
 
 import '../../../auth/presentation/provider/auth_provider.dart';
@@ -17,7 +16,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-
   @override
   void initState() {
     super.initState();
@@ -25,8 +23,9 @@ class _HomeScreenState extends State<HomeScreen> {
       context.read<AuthenticationProvider>().getCurrentUser();
       context.read<SupplierProvider>().getAllSuppliers();
       context.read<ProductProvider>().getAllProducts();
-      if( context.read<ProductProvider>().selectedProduct != null){
-        context.read<ProductProvider>().getProductById(context.read<ProductProvider>().selectedProduct!.id);
+      if (context.read<ProductProvider>().selectedProduct != null) {
+        context.read<ProductProvider>().getProductById(
+            context.read<ProductProvider>().selectedProduct!.id);
       }
     });
   }
@@ -80,17 +79,35 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         automaticallyImplyLeading: false,
-        title: const Text('Home Screen'),
+        title: SearchBarWidget(),
       ),
-
-      body:  Column(
-          children: <Widget>[
-            SearchBarWidget(),
-            Text(
-              'HomeScreen',
-            ),
-          ],
-      ),
+      body: SingleChildScrollView(
+          child: context.watch<SearchProvider>().selectedProduct == null
+              ? Container()
+              : Column(
+                  children: [
+                    Image.network(context
+                        .watch<SearchProvider>()
+                        .selectedProduct!
+                        .photoUrl),
+                    Text(context.watch<SearchProvider>().selectedProduct!.name),
+                    for (var priceModel in context
+                        .read<SearchProvider>()
+                        .selectedProduct!
+                        .getLatestPrices())
+                      Row(
+                        children: [
+                          Text(context
+                              .read<SupplierProvider>()
+                              .suppliers
+                              .firstWhere((element) =>
+                                  element.id == priceModel.supplierId)
+                              .name),
+                          Text(priceModel.price.toString()),
+                        ],
+                      )
+                  ],
+                )),
     );
   }
 }
