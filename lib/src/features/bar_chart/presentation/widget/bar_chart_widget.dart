@@ -4,16 +4,12 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../products/data/model/product_model.dart';
-import '../../../products/presentation/provider/product_provider.dart';
+import '../../../products/data/model/price_model.dart';
 import '../../../search/presentation/provider/search_provider.dart';
-import '../../../suppliers/data/model/supplier_model.dart';
 import '../../../suppliers/presentation/provider/supplier_provider.dart';
 
 class BarChartWidget extends StatefulWidget {
-  ProductModel product;
-
-  BarChartWidget({Key? key, required this.product}) : super(key: key);
+  BarChartWidget({Key? key}) : super(key: key);
 
   @override
   State<BarChartWidget> createState() => _BarChartWidgetState();
@@ -27,18 +23,14 @@ class _BarChartWidgetState extends State<BarChartWidget> {
         .firstWhere((element) =>
             element.id ==
             context
-                .watch<ProductProvider>()
-                .products
-                .firstWhere((element) => element.id == 'VLmjBwRmjtE47FdH1uXY')
-                .prices[value.toInt()]
+                .watch<SearchProvider>()
+                .selectedProduct!
+                .getLatestPrices()[value.toInt()]
                 .supplierId)
         .name;
 
     return Text(supplierName);
   }
-
-  double maxPrice = 0;
-  double interval = 0;
 
   SideTitles leftTitles(double interval) => SideTitles(
         getTitlesWidget: leftTitleWidgets,
@@ -64,11 +56,13 @@ class _BarChartWidgetState extends State<BarChartWidget> {
       child: BarChart(
         BarChartData(
             backgroundColor: Colors.white,
-            maxY: maxPrice + interval,
+            maxY: context.watch<SearchProvider>().barMaxPrice +
+                context.watch<SearchProvider>().barInterval,
             minY: 0,
             titlesData: FlTitlesData(
               leftTitles: AxisTitles(
-                sideTitles: leftTitles(interval.toDouble()),
+                sideTitles:
+                    leftTitles(context.watch<SearchProvider>().barInterval),
               ),
               rightTitles: const AxisTitles(
                 sideTitles: SideTitles(showTitles: false),
@@ -91,7 +85,7 @@ class _BarChartWidgetState extends State<BarChartWidget> {
                     .selectedProduct!
                     .getLatestPrices()
                     .length, (index) {
-              double price = context
+              /*double price = context
                   .watch<SearchProvider>()
                   .selectedProduct!
                   .getLatestPrices()[index]
@@ -102,13 +96,22 @@ class _BarChartWidgetState extends State<BarChartWidget> {
                   .firstWhere((element) =>
                       element.id ==
                       context
-                          .watch<ProductProvider>()
-                          .products
-                          .firstWhere(
-                              (element) => element.id == widget.product.id)
-                          .prices[index]
+                          .watch<SearchProvider>()
+                          .selectedProduct!
+                          .getLatestPrices()[index]
                           .supplierId);
-              String supplierName = supplierModel.name;
+              String supplierName = supplierModel.name;*/
+              PriceModel priceModel = context
+                  .watch<SearchProvider>()
+                  .selectedProduct!
+                  .getLatestPrices()[index];
+              double price = priceModel.price;
+              String supplierId = priceModel.supplierId;
+              String supplierName = context
+                  .read<SupplierProvider>()
+                  .suppliers
+                  .firstWhere((element) => element.id == supplierId)
+                  .name;
               List<int> color =
                   List.generate(3, (index) => Random().nextInt(255));
               Color colorSupplier =

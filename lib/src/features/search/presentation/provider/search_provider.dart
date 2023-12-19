@@ -31,7 +31,38 @@ class SearchProvider with ChangeNotifier {
     }
   }
 
+  double _barMaxPrice = 20;
+
+  double get barMaxPrice => _barMaxPrice;
+
+  set setMaxPrice(double maxPrice) {
+    _barMaxPrice = maxPrice;
+    notifyListeners();
+  }
+
+  double _barInterval = 10;
+
+  double get barInterval => _barInterval;
+
+  set setInterval(double interval) {
+    _barInterval = interval;
+    notifyListeners();
+  }
+
   void setSelectedProduct(ProductModel product) {
+    List<PriceModel> prices = product.getLatestPrices();
+    print('prices: ${prices.length}');
+    double maxPrice = 20;
+    for (PriceModel price in prices) {
+      if (price.price > maxPrice) {
+        maxPrice = price.price;
+      }
+    }
+    // arround up to the nearest 10
+    maxPrice = ((maxPrice / 10).ceil() * 10).toDouble();
+    print('maxPrice: $maxPrice');
+    _barMaxPrice = maxPrice;
+    _barInterval = maxPrice / 5;
     _selectedProduct = product;
     notifyListeners();
   }

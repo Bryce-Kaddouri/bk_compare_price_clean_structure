@@ -1,3 +1,4 @@
+import 'package:bk_compare_price_mvc/src/features/bar_chart/presentation/widget/bar_chart_widget.dart';
 import 'package:bk_compare_price_mvc/src/features/search/presentation/provider/search_provider.dart';
 import 'package:bk_compare_price_mvc/src/features/search/presentation/widget/search_bar_widget.dart';
 import 'package:bk_compare_price_mvc/src/features/suppliers/presentation/provider/supplier_provider.dart';
@@ -105,7 +106,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               .name),
                           Text(priceModel.price.toString()),
                         ],
-                      )
+                      ),
+                    BarChartWidget()
                   ],
                 )),
     );
