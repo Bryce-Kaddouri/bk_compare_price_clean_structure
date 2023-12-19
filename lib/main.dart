@@ -28,6 +28,7 @@ import 'package:bk_compare_price_mvc/src/features/products/presentation/screen/a
 import 'package:bk_compare_price_mvc/src/features/products/presentation/screen/product_detail_screen.dart';
 import 'package:bk_compare_price_mvc/src/features/products/presentation/screen/products_screen.dart';
 import 'package:bk_compare_price_mvc/src/features/products/presentation/screen/uploading_screen.dart';
+import 'package:bk_compare_price_mvc/src/features/search/presentation/provider/search_provider.dart';
 import 'package:bk_compare_price_mvc/src/features/suppliers/business/repository/supplier_repository.dart';
 import 'package:bk_compare_price_mvc/src/features/suppliers/business/usecase/add_supplier_usecase.dart';
 import 'package:bk_compare_price_mvc/src/features/suppliers/business/usecase/delete_supplier_usecase.dart';
@@ -99,6 +100,7 @@ void main() async{
       addProductUseCase: AddProductUseCase(repository: productRepository), uploadImageUseCase: ProductUploadImageUseCase(repository: productRepository), getAllProductsUseCase: GetAllProductsUseCase(repository: productRepository), getProductByIdUseCase: GetProductByIdUseCase(repository: productRepository), updateProductUseCase: UpdateProductUseCase(repository: productRepository), deleteProductUseCase: DeleteProductUseCase(repository: productRepository), updatePhotoUrlUseCase: ProductUpdatePhotoUrlUseCase(repository: productRepository),
       addProductPriceUseCase: AddProductPriceUseCase(repository: productRepository), deleteProductPriceUseCase: DeleteProductPriceUseCase(repository: productRepository), updateProductPriceUseCase: UpdateProductPriceUseCase(repository: productRepository),
     )),
+    ChangeNotifierProvider(create: (_)=>SearchProvider()),
   ], child: const MyApp()));
 }
 
