@@ -9,6 +9,15 @@ class SearchProvider with ChangeNotifier {
 
   SearchProvider({required this.getProductByIdUseCase});
 
+  SearchController _searchController = SearchController();
+
+  SearchController get searchController => _searchController;
+
+  void setSearchController(SearchController searchController) {
+    _searchController = searchController;
+    notifyListeners();
+  }
+
   ProductModel? _selectedProduct;
 
   ProductModel? get selectedProduct => _selectedProduct;

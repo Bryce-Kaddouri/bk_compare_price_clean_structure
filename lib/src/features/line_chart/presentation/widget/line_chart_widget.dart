@@ -1,26 +1,16 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
-class _LineChart extends StatefulWidget {
-  _LineChart({required this.isShowingMainData});
-
-  final bool isShowingMainData;
-
-  @override
-  State<_LineChart> createState() => _LineChartState();
-}
-
-class _LineChartState extends State<_LineChart> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
+class LineChartWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return LineChart(
-      lineChartData,
-      duration: const Duration(milliseconds: 250),
+    return Container(
+      height: 600,
+      width: 600,
+      child: LineChart(
+        lineChartData,
+        duration: const Duration(milliseconds: 250),
+      ),
     );
   }
 
@@ -149,11 +139,11 @@ class _LineChartState extends State<_LineChart> {
       );
 
   LineChartBarData get lineChartBarData1_1 => LineChartBarData(
-        isCurved: true,
+        isCurved: false,
         color: AppColors.contentColorGreen,
-        barWidth: 8,
+        barWidth: 4,
         isStrokeCapRound: true,
-        dotData: const FlDotData(show: false),
+        dotData: const FlDotData(show: true),
         belowBarData: BarAreaData(show: false),
         spots: const [
           FlSpot(1, 1),
@@ -167,11 +157,11 @@ class _LineChartState extends State<_LineChart> {
       );
 
   LineChartBarData get lineChartBarData1_2 => LineChartBarData(
-        isCurved: true,
+        isCurved: false,
         color: AppColors.contentColorPink,
-        barWidth: 8,
+        barWidth: 4,
         isStrokeCapRound: true,
-        dotData: const FlDotData(show: false),
+        dotData: const FlDotData(show: true),
         belowBarData: BarAreaData(
           show: false,
           color: AppColors.contentColorPink.withOpacity(0),
@@ -187,11 +177,11 @@ class _LineChartState extends State<_LineChart> {
       );
 
   LineChartBarData get lineChartBarData1_3 => LineChartBarData(
-        isCurved: true,
+        isCurved: false,
         color: AppColors.contentColorCyan,
-        barWidth: 8,
+        barWidth: 4,
         isStrokeCapRound: true,
-        dotData: const FlDotData(show: false),
+        dotData: const FlDotData(show: true),
         belowBarData: BarAreaData(show: false),
         spots: const [
           FlSpot(1, 2.8),
@@ -201,149 +191,6 @@ class _LineChartState extends State<_LineChart> {
           FlSpot(13, 2.5),
         ],
       );
-
-  LineChartBarData get lineChartBarData2_1 => LineChartBarData(
-        isCurved: true,
-        curveSmoothness: 0,
-        color: AppColors.contentColorGreen.withOpacity(0.5),
-        barWidth: 4,
-        isStrokeCapRound: true,
-        dotData: const FlDotData(show: false),
-        belowBarData: BarAreaData(show: false),
-        spots: const [
-          FlSpot(1, 1),
-          FlSpot(3, 4),
-          FlSpot(5, 1.8),
-          FlSpot(7, 5),
-          FlSpot(10, 2),
-          FlSpot(12, 2.2),
-          FlSpot(13, 1.8),
-        ],
-      );
-
-  LineChartBarData get lineChartBarData2_2 => LineChartBarData(
-        isCurved: true,
-        color: AppColors.contentColorPink.withOpacity(0.5),
-        barWidth: 4,
-        isStrokeCapRound: true,
-        dotData: const FlDotData(show: false),
-        belowBarData: BarAreaData(
-          show: true,
-          color: AppColors.contentColorPink.withOpacity(0.2),
-        ),
-        spots: const [
-          FlSpot(1, 1),
-          FlSpot(3, 2.8),
-          FlSpot(7, 1.2),
-          FlSpot(10, 2.8),
-          FlSpot(12, 2.6),
-          FlSpot(13, 3.9),
-        ],
-      );
-
-  LineChartBarData get lineChartBarData2_3 => LineChartBarData(
-        isCurved: true,
-        curveSmoothness: 0,
-        color: AppColors.contentColorCyan.withOpacity(0.5),
-        barWidth: 2,
-        isStrokeCapRound: true,
-        dotData: const FlDotData(show: true),
-        belowBarData: BarAreaData(show: false),
-        spots: const [
-          FlSpot(1, 3.8),
-          FlSpot(3, 1.9),
-          FlSpot(6, 5),
-          FlSpot(10, 3.3),
-          FlSpot(13, 4.5),
-        ],
-      );
-}
-
-class LineChartSample1 extends StatefulWidget {
-  LineChartSample1({super.key});
-
-  @override
-  State<StatefulWidget> createState() => LineChartSample1State();
-}
-
-class LineChartSample1State extends State<LineChartSample1> {
-  late bool isShowingMainData;
-
-  @override
-  void initState() {
-    super.initState();
-    print("LineChartSample1State");
-    isShowingMainData = true;
-/*
-    String? productId = context.read<ProductProvider>().getProductIdByProductName(widget.productName, context.read<AuthenticationProvider>().user!);
-*/
-/*    User? user = context.read<AuthenticationProvider>().user;
-
-    print("productId");
-    print(productId);
-    print("user");
-    print(user);*/
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    /*return
-      StreamBuilder(
-      stream: context.read<ProductProvider>().streamHistoryByProductId(context.read<ProductProvider>().getProductIdByProductName(widget.productName, context.read<AuthenticationProvider>().user!), context.read<AuthenticationProvider>().user!),
-      builder: (context, snapshot) {
-        print("snapshot");
-        print(snapshot.data);*/
-    return AspectRatio(
-      aspectRatio: 1.23,
-      child: Stack(
-        children: <Widget>[
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              const SizedBox(
-                height: 37,
-              ),
-              const Text(
-                'Monthly Sales',
-                style: TextStyle(
-                  color: AppColors.primary,
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 2,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(
-                height: 37,
-              ),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 16, left: 6),
-                  child: _LineChart(isShowingMainData: isShowingMainData),
-                ),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-            ],
-          ),
-          IconButton(
-            icon: Icon(
-              Icons.refresh,
-              color: Colors.white.withOpacity(isShowingMainData ? 1.0 : 0.5),
-            ),
-            onPressed: () {
-              setState(() {
-                isShowingMainData = !isShowingMainData;
-              });
-            },
-          )
-        ],
-      ),
-      /* );
-      },*/
-    );
-  }
 }
 
 class AppColors {

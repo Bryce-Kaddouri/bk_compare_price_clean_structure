@@ -5,9 +5,14 @@ import '../../../products/data/model/product_model.dart';
 import '../../../products/presentation/provider/product_provider.dart';
 import '../provider/search_provider.dart';
 
-class SearchBarWidget extends StatelessWidget {
+class SearchBarWidget extends StatefulWidget {
   SearchBarWidget({Key? key}) : super(key: key);
 
+  @override
+  State<SearchBarWidget> createState() => _SearchBarWidgetState();
+}
+
+class _SearchBarWidgetState extends State<SearchBarWidget> {
   SearchController searchController = SearchController();
 
   @override
