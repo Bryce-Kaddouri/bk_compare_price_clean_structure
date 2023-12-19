@@ -247,39 +247,43 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                 if(context.watch<ProductProvider>().selectedProduct!.prices.isEmpty)
                   Text('No Price')
                 else
-                  Container(
-                    height: 300,
-                    child: ListView.builder(
-                      itemCount: context.watch<ProductProvider>().allSuppliers.length,
-                      itemBuilder: (context, index){
-                        print(context.watch<ProductProvider>().selectedProduct!.prices.first.supplierId);
-                        return Column(
-                          children: [
-                            Text(context.watch<SupplierProvider>().suppliers.where((element) => element.id == context.watch<ProductProvider>().allSuppliers.elementAt(index)).first.name),
-                            ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: context.watch<ProductProvider>().selectedProduct!.prices.where((element) => element.supplierId == context.watch<ProductProvider>().allSuppliers.elementAt(index)).length,
-                              itemBuilder: (context, index2){
-                                return ListTile(
-                                  title: Text(context.watch<ProductProvider>().selectedProduct!.prices.where((element) => element.supplierId == context.watch<ProductProvider>().allSuppliers.elementAt(index)).elementAt(index2).price.toString()),
-                                  subtitle: Text(context.watch<ProductProvider>().selectedProduct!.prices.where((element) => element.supplierId == context.watch<ProductProvider>().allSuppliers.elementAt(index)).elementAt(index2).createdAt.toString()),
-                                  trailing: IconButton(onPressed: (){
+                  Column(
+                    children: List.generate(context.watch<ProductProvider>().allSuppliers.length, (index) {
+                      return Column(
+                        children: [
+                          Text(context.watch<SupplierProvider>().suppliers.where((element) => element.id == context.watch<ProductProvider>().allSuppliers.elementAt(index)).first.name),
+                          Column(
+                            children: List.generate(context.watch<ProductProvider>().selectedProduct!.prices.where((element) => element.supplierId == context.watch<ProductProvider>().allSuppliers.elementAt(index)).length, (index2) {
+                              return ListTile(
+                                title: Text(context.watch<ProductProvider>().selectedProduct!.prices.where((element) => element.supplierId == context.watch<ProductProvider>().allSuppliers.elementAt(index)).elementAt(index2).price.toString()),
+                                subtitle: Text(context.watch<ProductProvider>().selectedProduct!.prices.where((element) => element.supplierId == context.watch<ProductProvider>().allSuppliers.elementAt(index)).elementAt(index2).createdAt.toString()),
+                                trailing: Container(
+                                  height: 50,
+                                  width: 100,
+                                  child:Row(
+                                    children: [
+                                      IconButton(onPressed: (){
 /*
-                                    context.read<ProductProvider>().deleteProductPrice(context.watch<ProductProvider>().selectedProduct!.prices.where((element) => element.supplierId == context.watch<ProductProvider>().allSuppliers.elementAt(index)).elementAt(index2).id);
+                                        context.read<ProductProvider>().deleteProductPrice(context.watch<ProductProvider>().selectedProduct!.prices.where((element) => element.supplierId == context.watch<ProductProvider>().allSuppliers.elementAt(index)).elementAt(index2).id);
 */
-                                  }, icon: Icon(Icons.delete)),
-                                );
-                              },
-                            ),
+                                      }, icon: Icon(Icons.edit, color: Colors.blue,)),
+                                      IconButton(onPressed: (){
+/*
+                                        context.read<ProductProvider>().deleteProductPrice(context.watch<ProductProvider>().selectedProduct!.prices.where((element) => element.supplierId == context.watch<ProductProvider>().allSuppliers.elementAt(index)).elementAt(index2).id);
+*/
+                                      }, icon: Icon(Icons.delete, color: Colors.red,)),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            }),
+                          ),
 
-                          ],
-                        );
-                      },
-                    ),
-                  )
+                        ],
+                      );
 
-
-
+                    })
+                  ),
 
               ],
             ),
