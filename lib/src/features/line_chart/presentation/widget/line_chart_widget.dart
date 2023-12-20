@@ -1,7 +1,16 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-class LineChartWidget extends StatelessWidget {
+import '../../../products/data/model/price_model.dart';
+import '../../../search/presentation/provider/search_provider.dart';
+
+class LineChartWidget extends StatefulWidget {
+  @override
+  State<LineChartWidget> createState() => _LineChartWidgetState();
+}
+
+class _LineChartWidgetState extends State<LineChartWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -9,7 +18,7 @@ class LineChartWidget extends StatelessWidget {
       width: 600,
       child: LineChart(
         lineChartData,
-        duration: const Duration(milliseconds: 250),
+        swapAnimationDuration: const Duration(milliseconds: 250),
       ),
     );
   }
@@ -19,10 +28,34 @@ class LineChartWidget extends StatelessWidget {
         gridData: gridData,
         titlesData: titlesData1,
         borderData: borderData,
-        lineBarsData: lineBarsData1,
-        minX: 0,
-        maxX: 14,
-        maxY: 4,
+        lineBarsData: List.generate(
+            context.watch<SearchProvider>().suppliers.length,
+                (index1){
+              String supplierId = context.watch<SearchProvider>().suppliers[index1];
+              List<PriceModel> lstPrices= context.watch<SearchProvider>().selectedProduct!.prices.where((element) => element.supplierId == supplierId).toList();
+              print(lstPrices.length);
+              print(supplierId);
+              return LineChartBarData(
+          isCurved: false,
+          color: AppColors.contentColorPink,
+          barWidth: 4,
+          isStrokeCapRound: true,
+          dotData:  FlDotData(show: true),
+          belowBarData: BarAreaData(
+            show: false,
+            color: AppColors.contentColorPink.withOpacity(0),
+          ),
+          spots: List.generate(
+              lstPrices.length,
+                  (index2) {
+                PriceModel price = lstPrices[index2];
+                print(price.toMap());
+                return FlSpot(price.dateTime.month.toDouble(), price.price);
+                  }),
+        );}),
+        minX: 1,
+        maxX: 12,
+        maxY: context.watch<SearchProvider>().lineMaxPrice,
         minY: 0,
       );
 
@@ -37,10 +70,10 @@ class LineChartWidget extends StatelessWidget {
         bottomTitles: AxisTitles(
           sideTitles: bottomTitles,
         ),
-        rightTitles: const AxisTitles(
+        rightTitles:  AxisTitles(
           sideTitles: SideTitles(showTitles: false),
         ),
-        topTitles: const AxisTitles(
+        topTitles:  AxisTitles(
           sideTitles: SideTitles(showTitles: false),
         ),
         leftTitles: AxisTitles(
@@ -59,26 +92,7 @@ class LineChartWidget extends StatelessWidget {
       fontWeight: FontWeight.bold,
       fontSize: 14,
     );
-    String text;
-    switch (value.toInt()) {
-      case 1:
-        text = '1m';
-        break;
-      case 2:
-        text = '2m';
-        break;
-      case 3:
-        text = '3m';
-        break;
-      case 4:
-        text = '5m';
-        break;
-      case 5:
-        text = '6m';
-        break;
-      default:
-        return Container();
-    }
+    String text = value.toString();
 
     return Text(text, style: style, textAlign: TextAlign.center);
   }
@@ -86,25 +100,65 @@ class LineChartWidget extends StatelessWidget {
   SideTitles leftTitles() => SideTitles(
         getTitlesWidget: leftTitleWidgets,
         showTitles: true,
-        interval: 1,
+        interval: context.watch<SearchProvider>().lineInterval,
         reservedSize: 40,
       );
 
   Widget bottomTitleWidgets(double value, TitleMeta meta) {
+    bool isMobile = MediaQuery.of(context).size.width < 600;
     const style = TextStyle(
       fontWeight: FontWeight.bold,
       fontSize: 16,
     );
     Widget text;
     switch (value.toInt()) {
+      case 1:
+        text = isMobile ? const Text('J', style: style) :
+        const Text('JAN', style: style);
+        break;
       case 2:
-        text = const Text('SEPT', style: style);
+        text = isMobile ? const Text('F', style: style) :
+        const Text('FEB', style: style);
+        break;
+      case 3:
+        text = isMobile ? const Text('M', style: style) :
+        const Text('MAR', style: style);
+        break;
+      case 4:
+        text = isMobile ? const Text('A', style: style) :
+        const Text('APR', style: style);
+        break;
+      case 5:
+        text = isMobile ? const Text('M', style: style) :
+        const Text('MAY', style: style);
+        break;
+      case 6:
+        text = isMobile ? const Text('J', style: style) :
+        const Text('JUN', style: style);
         break;
       case 7:
-        text = const Text('OCT', style: style);
+        text = isMobile ? const Text('J', style: style) :
+        const Text('JUL', style: style);
+        break;
+      case 8:
+        text = isMobile ? const Text('A', style: style) :
+        const Text('AUG', style: style);
+        break;
+      case 9:
+        text = isMobile ? const Text('S', style: style) :
+        const Text('SEP', style: style);
+        break;
+      case 10:
+        text = isMobile ? const Text('O', style: style) :
+        const Text('OCT', style: style);
+        break;
+      case 11:
+        text = isMobile ? const Text('N', style: style) :
+        const Text('NOV', style: style);
         break;
       case 12:
-        text = const Text('DEC', style: style);
+        text = isMobile ? const Text('D', style: style) :
+        const Text('DEC', style: style);
         break;
       default:
         text = const Text('');
@@ -125,7 +179,7 @@ class LineChartWidget extends StatelessWidget {
         getTitlesWidget: bottomTitleWidgets,
       );
 
-  FlGridData get gridData => const FlGridData(show: false);
+  FlGridData get gridData =>  FlGridData(show: false);
 
   FlBorderData get borderData => FlBorderData(
         show: true,
@@ -143,7 +197,7 @@ class LineChartWidget extends StatelessWidget {
         color: AppColors.contentColorGreen,
         barWidth: 4,
         isStrokeCapRound: true,
-        dotData: const FlDotData(show: true),
+        dotData:  FlDotData(show: true),
         belowBarData: BarAreaData(show: false),
         spots: const [
           FlSpot(1, 1),
@@ -161,7 +215,7 @@ class LineChartWidget extends StatelessWidget {
         color: AppColors.contentColorPink,
         barWidth: 4,
         isStrokeCapRound: true,
-        dotData: const FlDotData(show: true),
+        dotData:  FlDotData(show: true),
         belowBarData: BarAreaData(
           show: false,
           color: AppColors.contentColorPink.withOpacity(0),
@@ -181,7 +235,7 @@ class LineChartWidget extends StatelessWidget {
         color: AppColors.contentColorCyan,
         barWidth: 4,
         isStrokeCapRound: true,
-        dotData: const FlDotData(show: true),
+        dotData:  FlDotData(show: true),
         belowBarData: BarAreaData(show: false),
         spots: const [
           FlSpot(1, 2.8),

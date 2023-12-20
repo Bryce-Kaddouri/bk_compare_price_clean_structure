@@ -64,10 +64,10 @@ class _BarChartWidgetState extends State<BarChartWidget> {
                 sideTitles:
                     leftTitles(context.watch<SearchProvider>().barInterval),
               ),
-              rightTitles: const AxisTitles(
+              rightTitles: AxisTitles(
                 sideTitles: SideTitles(showTitles: false),
               ),
-              topTitles: const AxisTitles(
+              topTitles: AxisTitles(
                 sideTitles: SideTitles(showTitles: false),
               ),
               bottomTitles: AxisTitles(

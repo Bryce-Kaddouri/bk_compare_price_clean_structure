@@ -53,25 +53,75 @@ class SearchProvider with ChangeNotifier {
 
   double get barInterval => _barInterval;
 
-  set setInterval(double interval) {
+  set setBarInterval(double interval) {
     _barInterval = interval;
     notifyListeners();
   }
 
+  double _lineMaxPrice = 20;
+  double get lineMaxPrice => _lineMaxPrice;
+  set setLineMaxPrice(double maxPrice) {
+    _lineMaxPrice = maxPrice;
+    notifyListeners();
+  }
+
+  double _lineInterval = 10;
+  double get lineInterval => _lineInterval;
+  set setLineInterval(double interval) {
+    _lineInterval = interval;
+    notifyListeners();
+  }
+
+  List<String> _suppliers = [];
+  List<String> get suppliers => _suppliers;
+  set setSuppliers(List<String> suppliers) {
+    _suppliers = suppliers;
+    notifyListeners();
+  }
+
+
+
   void setSelectedProduct(ProductModel product) {
-    List<PriceModel> prices = product.getLatestPrices();
-    print('prices: ${prices.length}');
-    double maxPrice = 20;
-    for (PriceModel price in prices) {
-      if (price.price > maxPrice) {
-        maxPrice = price.price;
+    List<PriceModel> barPrices = product.getLatestPrices();
+    List<PriceModel> linePrices = product.prices;
+    List<String> suppliers = [];
+
+
+
+
+    print('prices: ${barPrices.length}');
+    double barMaxPrice = 20;
+    double lineMaxPrice = 20;
+
+    for (PriceModel price in linePrices) {
+      if(suppliers.isEmpty) {
+        suppliers.add(price.supplierId);
+      } else {
+        if(!suppliers.contains(price.supplierId)) {
+          suppliers.add(price.supplierId);
+        }
+      }
+      if (price.price > lineMaxPrice) {
+        lineMaxPrice = price.price;
+      }
+    }
+    _suppliers = suppliers;
+    // arround up to the nearest 10
+    lineMaxPrice = ((lineMaxPrice / 10).ceil() * 10).toDouble();
+    print('maxPrice: $lineMaxPrice');
+
+    for (PriceModel price in barPrices) {
+      if (price.price > barMaxPrice) {
+        barMaxPrice = price.price;
       }
     }
     // arround up to the nearest 10
-    maxPrice = ((maxPrice / 10).ceil() * 10).toDouble();
-    print('maxPrice: $maxPrice');
-    _barMaxPrice = maxPrice;
-    _barInterval = maxPrice / 5;
+    barMaxPrice = ((barMaxPrice / 10).ceil() * 10).toDouble();
+    print('maxPrice: $barMaxPrice');
+    _lineMaxPrice = lineMaxPrice;
+    _lineInterval = lineMaxPrice / 5;
+    _barMaxPrice = barMaxPrice;
+    _barInterval = barMaxPrice / 5;
     _selectedProduct = product;
     notifyListeners();
   }
