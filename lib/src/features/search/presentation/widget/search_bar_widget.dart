@@ -48,7 +48,7 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
 
                         context
                             .read<SearchProvider>()
-                            .getProductById(productId);
+                            .getProductById(productId, true);
                         // close search bar
                         searchController.closeView(productName);
                       });

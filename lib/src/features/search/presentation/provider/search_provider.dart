@@ -22,8 +22,9 @@ class SearchProvider with ChangeNotifier {
 
   ProductModel? get selectedProduct => _selectedProduct;
 
-  void getProductById(String productId) async {
-    ProductModel? product = await getProductByIdUseCase.call(productId);
+  void getProductById(String productId, bool ascending) async {
+    ProductModel? product =
+        await getProductByIdUseCase.call(productId, ascending);
     if (product != null) {
       setSelectedProduct(product);
       List<PriceModel> prices = product.prices;
@@ -59,45 +60,46 @@ class SearchProvider with ChangeNotifier {
   }
 
   double _lineMaxPrice = 20;
+
   double get lineMaxPrice => _lineMaxPrice;
+
   set setLineMaxPrice(double maxPrice) {
     _lineMaxPrice = maxPrice;
     notifyListeners();
   }
 
   double _lineInterval = 10;
+
   double get lineInterval => _lineInterval;
+
   set setLineInterval(double interval) {
     _lineInterval = interval;
     notifyListeners();
   }
 
   List<String> _suppliers = [];
+
   List<String> get suppliers => _suppliers;
+
   set setSuppliers(List<String> suppliers) {
     _suppliers = suppliers;
     notifyListeners();
   }
-
-
 
   void setSelectedProduct(ProductModel product) {
     List<PriceModel> barPrices = product.getLatestPrices();
     List<PriceModel> linePrices = product.getAllPricesOrderByDate(false);
     List<String> suppliers = [];
 
-
-
-
     print('prices: ${barPrices.length}');
     double barMaxPrice = 20;
     double lineMaxPrice = 20;
 
     for (PriceModel price in linePrices) {
-      if(suppliers.isEmpty) {
+      if (suppliers.isEmpty) {
         suppliers.add(price.supplierId);
       } else {
-        if(!suppliers.contains(price.supplierId)) {
+        if (!suppliers.contains(price.supplierId)) {
           suppliers.add(price.supplierId);
         }
       }

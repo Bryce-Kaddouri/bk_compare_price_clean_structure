@@ -8,18 +8,17 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../business/usecase/add_product_price_usecase.dart';
-import '../../business/usecase/delete_product_price_usecase.dart';
-import '../../business/usecase/update_photo_url_usecase.dart';
-import '../../business/usecase/update_poduct_price_usecase.dart';
-import '../../business/usecase/upload_image_usecase.dart';
 import '../../business/usecase/add_product_usecase.dart';
+import '../../business/usecase/delete_product_price_usecase.dart';
 import '../../business/usecase/delete_product_usecase.dart';
 import '../../business/usecase/get_product_by_id_usecase.dart';
+import '../../business/usecase/update_photo_url_usecase.dart';
+import '../../business/usecase/update_poduct_price_usecase.dart';
 import '../../business/usecase/update_product_usecase.dart';
+import '../../business/usecase/upload_image_usecase.dart';
 import '../../data/model/price_model.dart';
 
 class ProductProvider with ChangeNotifier {
-
   final AddProductUseCase addProductUseCase;
   final ProductUploadImageUseCase uploadImageUseCase;
   final GetAllProductsUseCase getAllProductsUseCase;
@@ -42,7 +41,6 @@ class ProductProvider with ChangeNotifier {
     required this.addProductPriceUseCase,
     required this.deleteProductPriceUseCase,
     required this.updateProductPriceUseCase,
-
   });
 
   List<ProductModel> _products = [];
@@ -62,9 +60,10 @@ class ProductProvider with ChangeNotifier {
     setIsLoading(false);
   }
 
-  void getProductById(String productId) async {
+  void getProductById(String productId, bool ascending) async {
     setIsLoading(true);
-    ProductModel? product = await getProductByIdUseCase.call(productId);
+    ProductModel? product =
+        await getProductByIdUseCase.call(productId, ascending);
     if (product != null) {
       setSelectedProduct(product);
       List<PriceModel> prices = product.prices;
@@ -115,7 +114,6 @@ class ProductProvider with ChangeNotifier {
   void toggleIsEditingProductName() {
     setIsEditingProductName(!isEditingProductName);
   }
-
 
   ProductModel? _selectedProduct;
 
@@ -190,7 +188,6 @@ class ProductProvider with ChangeNotifier {
     notifyListeners();
   }
 
-
   ImagePicker _imagePicker = ImagePicker();
 
   ImagePicker get imagePicker => _imagePicker;
@@ -244,8 +241,7 @@ class ProductProvider with ChangeNotifier {
               ],
             ),
           );
-        }
-    );
+        });
   }
 
   Future<String?> addProduct(BuildContext context) async {
@@ -256,7 +252,8 @@ class ProductProvider with ChangeNotifier {
       setAddProductNameErrorMessage('Please select image');
     } else {
       DateTime now = DateTime.now();
-      ProductModel productModel = ProductModel(id: '',
+      ProductModel productModel = ProductModel(
+          id: '',
           name: _addProductNameController.text,
           photoUrl: '',
           createdAt: now,
@@ -268,10 +265,9 @@ class ProductProvider with ChangeNotifier {
       print('supplierId: $supplierId');
       if (supplierId != null) {
         File file = File(_addImagePath);
-        UploadTask? uploadTask = uploadImageUseCase.call(
-            file, supplierId, _imageData!);
+        UploadTask? uploadTask =
+            uploadImageUseCase.call(file, supplierId, _imageData!);
         if (uploadTask != null) {
-          print('uploadTask: $uploadTask');
           setAddUploadTask(uploadTask);
         } else {
           print('Error upload image to storage failed');
@@ -293,7 +289,8 @@ class ProductProvider with ChangeNotifier {
     String name = _editProductNameController.text;
     print('name: $name');
     if (_selectedProduct!.name != name) {
-      updateProductUseCase.call(ProductModel(id: _selectedProduct!.id,
+      updateProductUseCase.call(ProductModel(
+          id: _selectedProduct!.id,
           name: name,
           photoUrl: _selectedProduct!.photoUrl,
           createdAt: _selectedProduct!.createdAt,
@@ -339,8 +336,11 @@ class ProductProvider with ChangeNotifier {
   }
 
   TextEditingController _addPriceDateTimeController = TextEditingController();
-  TextEditingController get addPriceDateTimeController => _addPriceDateTimeController;
-  void setAddPriceDateTimeController(DateTime dateTime){
+
+  TextEditingController get addPriceDateTimeController =>
+      _addPriceDateTimeController;
+
+  void setAddPriceDateTimeController(DateTime dateTime) {
     _addPriceDateTimeController.text = dateTime.toString();
     notifyListeners();
   }
@@ -352,23 +352,27 @@ class ProductProvider with ChangeNotifier {
         firstDate: DateTime(2000),
         lastDate: DateTime.now());
     if (dateTime != null) {
-      dateTime = DateTime(dateTime.year, dateTime.month, dateTime.day,
-          0, 0, 0, 0, 0);
+      dateTime =
+          DateTime(dateTime.year, dateTime.month, dateTime.day, 0, 0, 0, 0, 0);
       setAddPriceDateTime(dateTime);
       setAddPriceDateTimeController(dateTime);
     }
   }
 
   String _addSupplierId = '';
+
   String get addSupplierId => _addSupplierId;
-  void setAddSupplierId(String value){
+
+  void setAddSupplierId(String value) {
     _addSupplierId = value;
     notifyListeners();
   }
 
   int _addIndexSupplier = 0;
+
   int get addIndexSupplier => _addIndexSupplier;
-  void setAddIndexSupplier(int value){
+
+  void setAddIndexSupplier(int value) {
     _addIndexSupplier = value;
     notifyListeners();
   }
@@ -384,13 +388,19 @@ class ProductProvider with ChangeNotifier {
         dateTime: _addPriceDateTime);
 
     addProductPriceUseCase.call(priceModel);
-
   }
 
   List<String> _allSuppliers = [];
+
   List<String> get allSuppliers => _allSuppliers;
-  void setAllSuppliers(List<String> suppliers){
+
+  void setAllSuppliers(List<String> suppliers) {
     _allSuppliers = suppliers;
     notifyListeners();
+  }
+
+  void deleteProductPrice(PriceModel price) {
+    deleteProductPriceUseCase.call(price);
+    getProductById(price.productId, false);
   }
 }

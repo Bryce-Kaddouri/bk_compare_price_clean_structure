@@ -7,12 +7,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 
-class ProductDataSource{
+class ProductDataSource {
   final FirebaseFirestore firestore;
   final FirebaseStorage storage;
   final FirebaseAuth auth;
 
-  ProductDataSource({required this.firestore, required this.storage, required this.auth});
+  ProductDataSource(
+      {required this.firestore, required this.storage, required this.auth});
 
   Future<List<ProductModel>> getAllProducts() async {
     try {
@@ -23,9 +24,8 @@ class ProductDataSource{
             .doc(user.uid)
             .collection('products')
             .get();
-        List<ProductModel> products = snapshot.docs
-            .map((e) => ProductModel.fromDocument(e))
-            .toList();
+        List<ProductModel> products =
+            snapshot.docs.map((e) => ProductModel.fromDocument(e)).toList();
         return products;
       }
       return [];
@@ -34,7 +34,7 @@ class ProductDataSource{
     }
   }
 
-  Future<ProductModel> getProductById (String id) async {
+  Future<ProductModel> getProductById(String id, bool ascending) async {
     try {
       final user = auth.currentUser;
       if (user != null) {
@@ -52,9 +52,14 @@ class ProductDataSource{
             .doc(productId)
             .collection('prices');
         QuerySnapshot pricesSnapshot = await pricesRef.get();
-        List<PriceModel> prices = pricesSnapshot.docs
-            .map((e) => PriceModel.fromDocument(e))
-            .toList();
+
+        List<PriceModel> prices =
+            pricesSnapshot.docs.map((e) => PriceModel.fromDocument(e)).toList();
+        if (ascending) {
+          prices.sort((a, b) => a.dateTime.compareTo(b.dateTime));
+        } else {
+          prices.sort((a, b) => b.dateTime.compareTo(a.dateTime));
+        }
         ProductModel product = ProductModel.fromDocument(snapshot);
         product.setPrices = prices;
         return product;
@@ -84,7 +89,7 @@ class ProductDataSource{
     }
   }
 
-  Future<void> addPriceForProduct(String productId, PriceModel price) async{
+  Future<void> addPriceForProduct(String productId, PriceModel price) async {
     try {
       final user = auth.currentUser;
       if (user != null) {
@@ -95,7 +100,7 @@ class ProductDataSource{
             .doc(productId)
             .collection('prices')
             .add(price.toMap());
-      }else{
+      } else {
         throw Exception('User is not logged in');
       }
     } on FirebaseException catch (e) {
@@ -103,7 +108,7 @@ class ProductDataSource{
     }
   }
 
-  Future<void> updateProductPrice(PriceModel price) async{
+  Future<void> updateProductPrice(PriceModel price) async {
     try {
       final user = auth.currentUser;
       if (user != null) {
@@ -115,7 +120,7 @@ class ProductDataSource{
             .collection('prices')
             .doc(price.id)
             .update(price.toMap());
-      }else{
+      } else {
         throw Exception('User is not logged in');
       }
     } on FirebaseException catch (e) {
@@ -123,7 +128,7 @@ class ProductDataSource{
     }
   }
 
-  Future<void> deleteProductPrice(PriceModel price) async{
+  Future<void> deleteProductPrice(PriceModel price) async {
     try {
       final user = auth.currentUser;
       if (user != null) {
@@ -135,7 +140,7 @@ class ProductDataSource{
             .collection('prices')
             .doc(price.id)
             .delete();
-      }else{
+      } else {
         throw Exception('User is not logged in');
       }
     } on FirebaseException catch (e) {
@@ -153,10 +158,9 @@ class ProductDataSource{
             .collection('products')
             .doc(product.id)
             .update(product.toMap());
-      }else{
+      } else {
         throw Exception('User is not logged in');
       }
-
     } on FirebaseException catch (e) {
       throw Exception(e.message);
     }
@@ -179,22 +183,19 @@ class ProductDataSource{
     }
   }
 
-  UploadTask? uploadImageToStorage(File? file, String supplierId, Uint8List? data) {
-    print('uploadImageToStorage');
+  UploadTask? uploadImageToStorage(
+      File? file, String supplierId, Uint8List? data) {
     try {
       final user = auth.currentUser;
-      print('user: $user');
       SettableMetadata metadata = SettableMetadata(
         contentType: 'image/jpeg',
       );
       if (user != null) {
-        if(kIsWeb) {
-          print('data: $data');
-
+        if (kIsWeb) {
           return storage
               .ref('users/${user.uid}/products/$supplierId.jpg')
               .putData(data!, metadata);
-        }else{
+        } else {
           return storage
               .ref('users/${user.uid}/products/$supplierId.jpg')
               .putFile(file!, metadata);
@@ -205,7 +206,7 @@ class ProductDataSource{
     }
   }
 
-  Future<void> updatePhotoUrl(String productId, String photoUrl) async{
+  Future<void> updatePhotoUrl(String productId, String photoUrl) async {
     try {
       final user = auth.currentUser;
       if (user != null) {
@@ -232,7 +233,7 @@ class ProductDataSource{
             .doc(price.productId)
             .collection('prices')
             .add(price.toMap());
-      }else{
+      } else {
         throw Exception('User is not logged in');
       }
     } on FirebaseException catch (e) {
@@ -240,4 +241,3 @@ class ProductDataSource{
     }
   }
 }
-

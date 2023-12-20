@@ -6,7 +6,7 @@ class GetProductByIdUseCase {
 
   GetProductByIdUseCase({required this.repository});
 
-  Future<ProductModel> call(String id) async {
-    return await repository.getProductById(id);
+  Future<ProductModel> call(String id, bool ascending) async {
+    return await repository.getProductById(id, ascending);
   }
 }

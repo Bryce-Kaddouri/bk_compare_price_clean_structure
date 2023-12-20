@@ -9,7 +9,6 @@ import '../../business/repository/product_repository.dart';
 import '../datasource/product_datasource.dart';
 
 class ProductRepositoryImpl implements ProductRepository {
-
   final ProductDataSource dataSource;
 
   ProductRepositoryImpl({required this.dataSource});
@@ -30,8 +29,8 @@ class ProductRepositoryImpl implements ProductRepository {
   }
 
   @override
-  Future<ProductModel> getProductById(String id) {
-    return dataSource.getProductById(id);
+  Future<ProductModel> getProductById(String id, bool ascending) {
+    return dataSource.getProductById(id, ascending);
   }
 
   @override
@@ -63,5 +62,4 @@ class ProductRepositoryImpl implements ProductRepository {
   Future<void> updateProductPrice(PriceModel price) {
     return dataSource.updateProductPrice(price);
   }
-
 }

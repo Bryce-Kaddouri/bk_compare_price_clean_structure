@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:bk_compare_price_mvc/src/features/suppliers/presentation/provider/supplier_provider.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
@@ -33,33 +31,39 @@ class _LineChartWidgetState extends State<LineChartWidget> {
         titlesData: titlesData1,
         borderData: borderData,
         lineBarsData: List.generate(
-            context.watch<SearchProvider>().suppliers.length,
-                (index1){
-              String supplierId = context.watch<SearchProvider>().suppliers[index1];
-              SupplierModel supplier = context.watch<SupplierProvider>().suppliers.firstWhere((element) => element.id == supplierId);
-              List<PriceModel> lstPrices= context.watch<SearchProvider>().selectedProduct!.prices.where((element) => element.supplierId == supplierId).toList();
+            context.watch<SearchProvider>().suppliers.length, (index1) {
+          String supplierId = context.watch<SearchProvider>().suppliers[index1];
+          SupplierModel supplier = context
+              .watch<SupplierProvider>()
+              .suppliers
+              .firstWhere((element) => element.id == supplierId);
+          List<PriceModel> lstPrices = context
+              .watch<SearchProvider>()
+              .selectedProduct!
+              .prices
+              .where((element) => element.supplierId == supplierId)
+              .toList();
 
-              return LineChartBarData(
-          isCurved: false,
-          color: supplier.color,
-          barWidth: 4,
-          isStrokeCapRound: true,
-          dotData:  FlDotData(show: true),
-          belowBarData: BarAreaData(
-            show: false,
-            color: supplier.color.withOpacity(0),
-          ),
-          spots: List.generate(
-              lstPrices.length,
-                  (index2) {
-                PriceModel price = lstPrices[index2];
-                print('-' * 50);
-                print(price.toMap());
-                print(price.dateTime.month);
-                print(price.price);
-                return FlSpot(price.dateTime.month.toDouble(), price.price);
-                  }),
-        );}),
+          return LineChartBarData(
+            isCurved: false,
+            color: supplier.color,
+            barWidth: 4,
+            isStrokeCapRound: true,
+            dotData: FlDotData(show: true),
+            belowBarData: BarAreaData(
+              show: false,
+              color: supplier.color.withOpacity(0),
+            ),
+            spots: List.generate(lstPrices.length, (index2) {
+              PriceModel price = lstPrices[index2];
+              print('-' * 50);
+              print(price.toMap());
+              print(price.dateTime.month);
+              print(price.price);
+              return FlSpot(price.dateTime.month.toDouble(), price.price);
+            }),
+          );
+        }),
         minX: 1,
         maxX: 12,
         maxY: context.watch<SearchProvider>().lineMaxPrice,
@@ -77,10 +81,10 @@ class _LineChartWidgetState extends State<LineChartWidget> {
         bottomTitles: AxisTitles(
           sideTitles: bottomTitles,
         ),
-        rightTitles:  AxisTitles(
+        rightTitles: AxisTitles(
           sideTitles: SideTitles(showTitles: false),
         ),
-        topTitles:  AxisTitles(
+        topTitles: AxisTitles(
           sideTitles: SideTitles(showTitles: false),
         ),
         leftTitles: AxisTitles(
@@ -120,52 +124,64 @@ class _LineChartWidgetState extends State<LineChartWidget> {
     Widget text;
     switch (value.toInt()) {
       case 1:
-        text = isMobile ? const Text('J', style: style) :
-        const Text('JAN', style: style);
+        text = isMobile
+            ? const Text('J', style: style)
+            : const Text('JAN', style: style);
         break;
       case 2:
-        text = isMobile ? const Text('F', style: style) :
-        const Text('FEB', style: style);
+        text = isMobile
+            ? const Text('F', style: style)
+            : const Text('FEB', style: style);
         break;
       case 3:
-        text = isMobile ? const Text('M', style: style) :
-        const Text('MAR', style: style);
+        text = isMobile
+            ? const Text('M', style: style)
+            : const Text('MAR', style: style);
         break;
       case 4:
-        text = isMobile ? const Text('A', style: style) :
-        const Text('APR', style: style);
+        text = isMobile
+            ? const Text('A', style: style)
+            : const Text('APR', style: style);
         break;
       case 5:
-        text = isMobile ? const Text('M', style: style) :
-        const Text('MAY', style: style);
+        text = isMobile
+            ? const Text('M', style: style)
+            : const Text('MAY', style: style);
         break;
       case 6:
-        text = isMobile ? const Text('J', style: style) :
-        const Text('JUN', style: style);
+        text = isMobile
+            ? const Text('J', style: style)
+            : const Text('JUN', style: style);
         break;
       case 7:
-        text = isMobile ? const Text('J', style: style) :
-        const Text('JUL', style: style);
+        text = isMobile
+            ? const Text('J', style: style)
+            : const Text('JUL', style: style);
         break;
       case 8:
-        text = isMobile ? const Text('A', style: style) :
-        const Text('AUG', style: style);
+        text = isMobile
+            ? const Text('A', style: style)
+            : const Text('AUG', style: style);
         break;
       case 9:
-        text = isMobile ? const Text('S', style: style) :
-        const Text('SEP', style: style);
+        text = isMobile
+            ? const Text('S', style: style)
+            : const Text('SEP', style: style);
         break;
       case 10:
-        text = isMobile ? const Text('O', style: style) :
-        const Text('OCT', style: style);
+        text = isMobile
+            ? const Text('O', style: style)
+            : const Text('OCT', style: style);
         break;
       case 11:
-        text = isMobile ? const Text('N', style: style) :
-        const Text('NOV', style: style);
+        text = isMobile
+            ? const Text('N', style: style)
+            : const Text('NOV', style: style);
         break;
       case 12:
-        text = isMobile ? const Text('D', style: style) :
-        const Text('DEC', style: style);
+        text = isMobile
+            ? const Text('D', style: style)
+            : const Text('DEC', style: style);
         break;
       default:
         text = const Text('');
@@ -186,7 +202,7 @@ class _LineChartWidgetState extends State<LineChartWidget> {
         getTitlesWidget: bottomTitleWidgets,
       );
 
-  FlGridData get gridData =>  FlGridData(show: false);
+  FlGridData get gridData => FlGridData(show: false);
 
   FlBorderData get borderData => FlBorderData(
         show: true,
@@ -204,7 +220,7 @@ class _LineChartWidgetState extends State<LineChartWidget> {
         color: AppColors.contentColorGreen,
         barWidth: 4,
         isStrokeCapRound: true,
-        dotData:  FlDotData(show: true),
+        dotData: FlDotData(show: true),
         belowBarData: BarAreaData(show: false),
         spots: const [
           FlSpot(1, 1),
@@ -222,7 +238,7 @@ class _LineChartWidgetState extends State<LineChartWidget> {
         color: AppColors.contentColorPink,
         barWidth: 4,
         isStrokeCapRound: true,
-        dotData:  FlDotData(show: true),
+        dotData: FlDotData(show: true),
         belowBarData: BarAreaData(
           show: false,
           color: AppColors.contentColorPink.withOpacity(0),
@@ -242,7 +258,7 @@ class _LineChartWidgetState extends State<LineChartWidget> {
         color: AppColors.contentColorCyan,
         barWidth: 4,
         isStrokeCapRound: true,
-        dotData:  FlDotData(show: true),
+        dotData: FlDotData(show: true),
         belowBarData: BarAreaData(show: false),
         spots: const [
           FlSpot(1, 2.8),
