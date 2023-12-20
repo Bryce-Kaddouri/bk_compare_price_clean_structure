@@ -42,6 +42,26 @@ class ProductModel {
     };
   }
 
+  List<PriceModel> getAllPricesOrderByDate(bool ascending) {
+    /*// get all prices and sort them by date
+    List<PriceModel> allPrices = [];
+    for (PriceModel price in prices) {
+      allPrices.add(price);
+    }
+    allPrices.sort((a, b) => a.dateTime.compareTo(b.dateTime));
+    return allPrices;*/
+    List<PriceModel> allPrices = [];
+    for (PriceModel price in prices) {
+      allPrices.add(price);
+    }
+    if (ascending) {
+      allPrices.sort((a, b) => a.dateTime.compareTo(b.dateTime));
+    } else {
+      allPrices.sort((a, b) => b.dateTime.compareTo(a.dateTime));
+    }
+    return allPrices;
+  }
+
   List<PriceModel> getLatestPrices() {
     // get the latest prices for each supplier
     List<PriceModel> latestPrices = [];

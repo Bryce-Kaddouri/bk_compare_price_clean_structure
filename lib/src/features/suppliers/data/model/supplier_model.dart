@@ -1,4 +1,7 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 
 class SupplierModel{
   final String id;
@@ -6,6 +9,7 @@ class SupplierModel{
   final String photoUrl;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final Color color;
 
   SupplierModel({
     required this.id,
@@ -13,6 +17,7 @@ class SupplierModel{
     required this.photoUrl,
     required this.createdAt,
     required this.updatedAt,
+    required this.color,
   });
 
   factory SupplierModel.fromDocument(DocumentSnapshot doc){
@@ -22,6 +27,7 @@ class SupplierModel{
       photoUrl: doc['photoUrl'],
       createdAt: doc['createdAt'].toDate(),
       updatedAt: doc['updatedAt'].toDate(),
+      color: Color.fromRGBO(Random().nextInt(255), Random().nextInt(255), Random().nextInt(255), 1),
     );
   }
 
@@ -40,6 +46,7 @@ SupplierModel copyWith({
     String? photoUrl,
     DateTime? createdAt,
     DateTime? updatedAt,
+    Color? color,
   }){
     return SupplierModel(
       id: id ?? this.id,
@@ -47,6 +54,8 @@ SupplierModel copyWith({
       photoUrl: photoUrl ?? this.photoUrl,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      color: color ?? this.color,
+
     );
   }
 

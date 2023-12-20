@@ -1,6 +1,7 @@
 
 
 import 'dart:io';
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:bk_compare_price_mvc/src/features/suppliers/data/model/supplier_model.dart';
@@ -164,7 +165,7 @@ class SupplierProvider with ChangeNotifier{
       setAddSupplierNameErrorMessage('Please select image');
     }else{
       DateTime now = DateTime.now();
-      SupplierModel supplier = SupplierModel(id: '', name: _addSupplierNameController.text, photoUrl: '', createdAt: now, updatedAt: now);
+      SupplierModel supplier = SupplierModel(id: '', name: _addSupplierNameController.text, photoUrl: '', createdAt: now, updatedAt: now, color: Color.fromRGBO(Random().nextInt(255), Random().nextInt(255), Random().nextInt(255), 1));
 
       String? supplierId = await addSupplierUseCase.call(supplier);
       setIsLoading(false);
@@ -192,7 +193,7 @@ void updateSupplier(BuildContext context, String supplierId) async{
       setAddSupplierNameErrorMessage('Please enter supplier name');
     }else{
       DateTime now = DateTime.now();
-      SupplierModel supplier = SupplierModel(id: supplierId, name: _addSupplierNameController.text, photoUrl: '', createdAt: now, updatedAt: now);
+      SupplierModel supplier = SupplierModel(id: supplierId, name: _addSupplierNameController.text, photoUrl: '', createdAt: now, updatedAt: now, color: _selectedSupplier!.color);
 
       await updateSupplierUseCase.call(supplier);
       setIsLoading(false);
@@ -264,7 +265,7 @@ void updateSupplier(BuildContext context, String supplierId) async{
     String name = _editSupplierNameController.text;
     print('name: $name');
     if(_selectedSupplier!.name != name){
-      updateSupplierUseCase.call(SupplierModel(id: _selectedSupplier!.id, name: name, photoUrl: _selectedSupplier!.photoUrl, createdAt: _selectedSupplier!.createdAt, updatedAt: DateTime.now()));
+      updateSupplierUseCase.call(SupplierModel(id: _selectedSupplier!.id, name: name, photoUrl: _selectedSupplier!.photoUrl, createdAt: _selectedSupplier!.createdAt, updatedAt: DateTime.now(), color: _selectedSupplier!.color));
     }
   }
 

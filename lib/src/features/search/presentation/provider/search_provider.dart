@@ -83,7 +83,7 @@ class SearchProvider with ChangeNotifier {
 
   void setSelectedProduct(ProductModel product) {
     List<PriceModel> barPrices = product.getLatestPrices();
-    List<PriceModel> linePrices = product.prices;
+    List<PriceModel> linePrices = product.getAllPricesOrderByDate(false);
     List<String> suppliers = [];
 
 

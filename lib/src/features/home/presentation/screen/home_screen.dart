@@ -110,6 +110,33 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     BarChartWidget(),
                     LineChartWidget(),
+                    Container(
+                      height: 100,
+                      child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: context
+                              .read<SearchProvider>()
+                              .suppliers.length,
+                          itemBuilder: (context, index) {
+                            String supplierId = context
+                                .read<SearchProvider>()
+                                .suppliers[index];
+                            return Container(
+                              color: context
+                                  .read<SupplierProvider>()
+                                  .suppliers
+                                  .firstWhere((element) =>
+                              element.id == supplierId)
+                                  .color,
+                              child: Text(context
+                                  .read<SupplierProvider>()
+                                  .suppliers
+                                  .firstWhere((element) =>
+                              element.id == supplierId)
+                                  .name),
+                            );
+                          }),
+                    ),
                   ],
                 )),
     );

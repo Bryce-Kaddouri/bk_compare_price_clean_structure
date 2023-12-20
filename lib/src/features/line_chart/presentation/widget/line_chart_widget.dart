@@ -1,9 +1,13 @@
+import 'dart:math';
+
+import 'package:bk_compare_price_mvc/src/features/suppliers/presentation/provider/supplier_provider.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../products/data/model/price_model.dart';
 import '../../../search/presentation/provider/search_provider.dart';
+import '../../../suppliers/data/model/supplier_model.dart';
 
 class LineChartWidget extends StatefulWidget {
   @override
@@ -32,24 +36,27 @@ class _LineChartWidgetState extends State<LineChartWidget> {
             context.watch<SearchProvider>().suppliers.length,
                 (index1){
               String supplierId = context.watch<SearchProvider>().suppliers[index1];
+              SupplierModel supplier = context.watch<SupplierProvider>().suppliers.firstWhere((element) => element.id == supplierId);
               List<PriceModel> lstPrices= context.watch<SearchProvider>().selectedProduct!.prices.where((element) => element.supplierId == supplierId).toList();
-              print(lstPrices.length);
-              print(supplierId);
+
               return LineChartBarData(
           isCurved: false,
-          color: AppColors.contentColorPink,
+          color: supplier.color,
           barWidth: 4,
           isStrokeCapRound: true,
           dotData:  FlDotData(show: true),
           belowBarData: BarAreaData(
             show: false,
-            color: AppColors.contentColorPink.withOpacity(0),
+            color: supplier.color.withOpacity(0),
           ),
           spots: List.generate(
               lstPrices.length,
                   (index2) {
                 PriceModel price = lstPrices[index2];
+                print('-' * 50);
                 print(price.toMap());
+                print(price.dateTime.month);
+                print(price.price);
                 return FlSpot(price.dateTime.month.toDouble(), price.price);
                   }),
         );}),
