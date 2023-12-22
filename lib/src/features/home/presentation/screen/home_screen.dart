@@ -88,29 +88,26 @@ class _HomeScreenState extends State<HomeScreen> {
               ? Container()
               : Column(
                   children: [
-                    Image.network(context
-                        .watch<SearchProvider>()
-                        .selectedProduct!
-                        .photoUrl),
-                    Text(context.watch<SearchProvider>().selectedProduct!.name),
-                    for (var priceModel in context
-                        .read<SearchProvider>()
-                        .selectedProduct!
-                        .getLatestPrices())
-                      Row(
-                        children: [
-                          Text(context
-                              .read<SupplierProvider>()
-                              .suppliers
-                              .firstWhere((element) =>
-                                  element.id == priceModel.supplierId)
-                              .name),
-                          Text(priceModel.price.toString()),
-                        ],
-                      ),
+                    const Text('Current Price by Supplier',
+                        style: TextStyle(
+                            fontSize: 24,
+                            decoration: TextDecoration.underline)),
+                    const SizedBox(
+                      height: 20,
+                    ),
                     BarChartWidget(),
+                    const SizedBox(
+                      height: 60,
+                    ),
+                    const Text('Price History by Supplier',
+                        style: TextStyle(
+                            fontSize: 24,
+                            decoration: TextDecoration.underline)),
+                    const SizedBox(
+                      height: 20,
+                    ),
                     LineChartWidget(),
-                    Container(
+                    SizedBox(
                       height: 100,
                       child: ListView.builder(
                           scrollDirection: Axis.horizontal,

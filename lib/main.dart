@@ -10,6 +10,7 @@ import 'package:bk_compare_price_mvc/src/features/auth/data/repository/auth_repo
 import 'package:bk_compare_price_mvc/src/features/auth/presentation/provider/auth_provider.dart';
 import 'package:bk_compare_price_mvc/src/features/auth/presentation/screen/signin_screen.dart';
 import 'package:bk_compare_price_mvc/src/features/home/presentation/screen/home_screen.dart';
+import 'package:bk_compare_price_mvc/src/features/line_chart/presentation/provider/line_chart_provider.dart';
 import 'package:bk_compare_price_mvc/src/features/products/business/repository/product_repository.dart';
 import 'package:bk_compare_price_mvc/src/features/products/business/usecase/add_product_price_usecase.dart';
 import 'package:bk_compare_price_mvc/src/features/products/business/usecase/add_product_usecase.dart';
@@ -128,6 +129,9 @@ void main() async {
         create: (_) => SearchProvider(
             getProductByIdUseCase:
                 GetProductByIdUseCase(repository: productRepository))),
+    ChangeNotifierProvider(
+      create: (_) => LineChartProvider(),
+    ),
   ], child: const MyApp()));
 }
 

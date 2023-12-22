@@ -1,3 +1,5 @@
+import 'package:bk_compare_price_mvc/src/core/helper/date_helper.dart';
+import 'package:bk_compare_price_mvc/src/features/line_chart/presentation/provider/line_chart_provider.dart';
 import 'package:bk_compare_price_mvc/src/features/suppliers/presentation/provider/supplier_provider.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +28,53 @@ class _LineChartWidgetState extends State<LineChartWidget> {
   }
 
   LineChartData get lineChartData => LineChartData(
-        lineTouchData: lineTouchData1,
+        lineTouchData: LineTouchData(
+          handleBuiltInTouches: true,
+          touchTooltipData: LineTouchTooltipData(
+            getTooltipItems: (List<LineBarSpot> touchedBarSpots) {
+              return touchedBarSpots.map((barSpot) {
+                String supplierId = context
+                    .read<SearchProvider>()
+                    .suppliers[barSpot.barIndex.toInt()];
+                SupplierModel supplier = context
+                    .read<SupplierProvider>()
+                    .suppliers
+                    .firstWhere((element) => element.id == supplierId);
+                PriceModel price = context
+                    .read<SearchProvider>()
+                    .selectedProduct!
+                    .prices
+                    .firstWhere((element) =>
+                        element.supplierId == supplierId &&
+                        DateHelper.getDayNumberInYear(element.dateTime) ==
+                            barSpot.x.toInt());
+
+                return LineTooltipItem(
+                  supplier.name,
+                  TextStyle(color: supplier.color),
+                  children: <TextSpan>[
+                    TextSpan(
+                      text: '\n\$${price.price.toStringAsFixed(2)}',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                      ),
+                    ),
+                    TextSpan(
+                      text:
+                          '\n${DateHelper.getFormattedDate(price.dateTime).toString()}\n',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                );
+              }).toList();
+            },
+            tooltipBgColor: Colors.blueGrey.withOpacity(0.8),
+          ),
+        ),
         gridData: gridData,
         titlesData: titlesData1,
         borderData: borderData,
@@ -56,16 +104,18 @@ class _LineChartWidgetState extends State<LineChartWidget> {
             ),
             spots: List.generate(lstPrices.length, (index2) {
               PriceModel price = lstPrices[index2];
-              print('-' * 50);
-              print(price.toMap());
-              print(price.dateTime.month);
-              print(price.price);
-              return FlSpot(price.dateTime.month.toDouble(), price.price);
+              return FlSpot(
+                  double.parse(
+                      DateHelper.getDayNumberInYear(price.dateTime).toString()),
+                  price.price);
             }),
           );
         }),
         minX: 1,
-        maxX: 12,
+        maxX: double.parse(context
+            .watch<LineChartProvider>()
+            .numberOfDaysInSelectedYear
+            .toString()),
         maxY: context.watch<SearchProvider>().lineMaxPrice,
         minY: 0,
       );
@@ -92,12 +142,6 @@ class _LineChartWidgetState extends State<LineChartWidget> {
         ),
       );
 
-  List<LineChartBarData> get lineBarsData1 => [
-        lineChartBarData1_1,
-        lineChartBarData1_2,
-        lineChartBarData1_3,
-      ];
-
   Widget leftTitleWidgets(double value, TitleMeta meta) {
     const style = TextStyle(
       fontWeight: FontWeight.bold,
@@ -122,70 +166,30 @@ class _LineChartWidgetState extends State<LineChartWidget> {
       fontSize: 16,
     );
     Widget text;
-    switch (value.toInt()) {
-      case 1:
-        text = isMobile
-            ? const Text('J', style: style)
-            : const Text('JAN', style: style);
-        break;
-      case 2:
-        text = isMobile
-            ? const Text('F', style: style)
-            : const Text('FEB', style: style);
-        break;
-      case 3:
-        text = isMobile
-            ? const Text('M', style: style)
-            : const Text('MAR', style: style);
-        break;
-      case 4:
-        text = isMobile
-            ? const Text('A', style: style)
-            : const Text('APR', style: style);
-        break;
-      case 5:
-        text = isMobile
-            ? const Text('M', style: style)
-            : const Text('MAY', style: style);
-        break;
-      case 6:
-        text = isMobile
-            ? const Text('J', style: style)
-            : const Text('JUN', style: style);
-        break;
-      case 7:
-        text = isMobile
-            ? const Text('J', style: style)
-            : const Text('JUL', style: style);
-        break;
-      case 8:
-        text = isMobile
-            ? const Text('A', style: style)
-            : const Text('AUG', style: style);
-        break;
-      case 9:
-        text = isMobile
-            ? const Text('S', style: style)
-            : const Text('SEP', style: style);
-        break;
-      case 10:
-        text = isMobile
-            ? const Text('O', style: style)
-            : const Text('OCT', style: style);
-        break;
-      case 11:
-        text = isMobile
-            ? const Text('N', style: style)
-            : const Text('NOV', style: style);
-        break;
-      case 12:
-        text = isMobile
-            ? const Text('D', style: style)
-            : const Text('DEC', style: style);
-        break;
-      default:
-        text = const Text('');
-        break;
+    List<int> firstDayOfMonth =
+        context.watch<LineChartProvider>().firstDayOfMonth;
+
+    // -15 because we want to display the month in the middle of the month
+    if (firstDayOfMonth.contains(value.toInt() - 15)) {
+      if (isMobile) {
+        text = Text(
+          DateHelper.getMonthName(value.toInt(),
+                  context.watch<LineChartProvider>().selectedYear)
+              .substring(0, 1)
+              .toUpperCase(),
+          style: style,
+          textAlign: TextAlign.center,
+        );
+      } else {
+        text = Text(
+          DateHelper.getMonthName(
+              value.toInt(), context.watch<LineChartProvider>().selectedYear),
+          style: style,
+          textAlign: TextAlign.center,
+        );
+      }
+    } else {
+      text = const Text('');
     }
 
     return SideTitleWidget(
@@ -202,94 +206,32 @@ class _LineChartWidgetState extends State<LineChartWidget> {
         getTitlesWidget: bottomTitleWidgets,
       );
 
-  FlGridData get gridData => FlGridData(show: false);
+  FlGridData get gridData => FlGridData(
+        show: true,
+        drawVerticalLine: true,
+        drawHorizontalLine: false,
+        verticalInterval: 30,
+        getDrawingHorizontalLine: (value) {
+          return FlLine(
+            color: Colors.grey.withOpacity(0.5),
+            strokeWidth: 1.5,
+          );
+        },
+        getDrawingVerticalLine: (value) {
+          return FlLine(
+            color: Colors.grey.withOpacity(0.5),
+            strokeWidth: 1.5,
+          );
+        },
+      );
 
   FlBorderData get borderData => FlBorderData(
         show: true,
         border: Border(
-          bottom:
-              BorderSide(color: AppColors.primary.withOpacity(0.2), width: 4),
-          left: const BorderSide(color: Colors.transparent),
+          bottom: BorderSide(color: Colors.grey.withOpacity(0.5), width: 1.5),
+          left: BorderSide(color: Colors.grey.withOpacity(0.5), width: 1.5),
           right: const BorderSide(color: Colors.transparent),
           top: const BorderSide(color: Colors.transparent),
         ),
       );
-
-  LineChartBarData get lineChartBarData1_1 => LineChartBarData(
-        isCurved: false,
-        color: AppColors.contentColorGreen,
-        barWidth: 4,
-        isStrokeCapRound: true,
-        dotData: FlDotData(show: true),
-        belowBarData: BarAreaData(show: false),
-        spots: const [
-          FlSpot(1, 1),
-          FlSpot(3, 1.5),
-          FlSpot(5, 1.4),
-          FlSpot(7, 3.4),
-          FlSpot(10, 2),
-          FlSpot(12, 2.2),
-          FlSpot(13, 1.8),
-        ],
-      );
-
-  LineChartBarData get lineChartBarData1_2 => LineChartBarData(
-        isCurved: false,
-        color: AppColors.contentColorPink,
-        barWidth: 4,
-        isStrokeCapRound: true,
-        dotData: FlDotData(show: true),
-        belowBarData: BarAreaData(
-          show: false,
-          color: AppColors.contentColorPink.withOpacity(0),
-        ),
-        spots: const [
-          FlSpot(1, 1),
-          FlSpot(3, 2.8),
-          FlSpot(7, 1.2),
-          FlSpot(10, 2.8),
-          FlSpot(12, 2.6),
-          FlSpot(13, 3.9),
-        ],
-      );
-
-  LineChartBarData get lineChartBarData1_3 => LineChartBarData(
-        isCurved: false,
-        color: AppColors.contentColorCyan,
-        barWidth: 4,
-        isStrokeCapRound: true,
-        dotData: FlDotData(show: true),
-        belowBarData: BarAreaData(show: false),
-        spots: const [
-          FlSpot(1, 2.8),
-          FlSpot(3, 1.9),
-          FlSpot(6, 3),
-          FlSpot(10, 1.3),
-          FlSpot(13, 2.5),
-        ],
-      );
-}
-
-class AppColors {
-  static const Color primary = contentColorCyan;
-  static const Color menuBackground = Color(0xFF090912);
-  static const Color itemsBackground = Color(0xFF1B2339);
-  static const Color pageBackground = Color(0xFF282E45);
-  static const Color mainTextColor1 = Colors.white;
-  static const Color mainTextColor2 = Colors.white70;
-  static const Color mainTextColor3 = Colors.white38;
-  static const Color mainGridLineColor = Colors.white10;
-  static const Color borderColor = Colors.white54;
-  static const Color gridLinesColor = Color(0x11FFFFFF);
-
-  static const Color contentColorBlack = Colors.black;
-  static const Color contentColorWhite = Colors.white;
-  static const Color contentColorBlue = Color(0xFF2196F3);
-  static const Color contentColorYellow = Color(0xFFFFC300);
-  static const Color contentColorOrange = Color(0xFFFF683B);
-  static const Color contentColorGreen = Color(0xFF3BFF49);
-  static const Color contentColorPurple = Color(0xFF6E1BFF);
-  static const Color contentColorPink = Color(0xFFFF3AF2);
-  static const Color contentColorRed = Color(0xFFE80054);
-  static const Color contentColorCyan = Color(0xFF50E4FF);
 }

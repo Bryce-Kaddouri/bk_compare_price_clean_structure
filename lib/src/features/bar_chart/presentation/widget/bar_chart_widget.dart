@@ -1,5 +1,4 @@
-import 'dart:math';
-
+import 'package:bk_compare_price_mvc/src/features/suppliers/data/model/supplier_model.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -107,15 +106,11 @@ class _BarChartWidgetState extends State<BarChartWidget> {
                   .getLatestPrices()[index];
               double price = priceModel.price;
               String supplierId = priceModel.supplierId;
-              String supplierName = context
+              SupplierModel supplierModel = context
                   .read<SupplierProvider>()
                   .suppliers
-                  .firstWhere((element) => element.id == supplierId)
-                  .name;
-              List<int> color =
-                  List.generate(3, (index) => Random().nextInt(255));
-              Color colorSupplier =
-                  Color.fromRGBO(color[0], color[1], color[2], 1);
+                  .firstWhere((element) => element.id == supplierId);
+              Color colorSupplier = supplierModel.color;
 
               return BarChartGroupData(
                 x: index,
