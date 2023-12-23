@@ -50,8 +50,8 @@ class _BarChartWidgetState extends State<BarChartWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 600,
-      width: 600,
+      height: MediaQuery.of(context).size.height - 100,
+      width: MediaQuery.of(context).size.width,
       child: BarChart(
         BarChartData(
             backgroundColor: Colors.white,

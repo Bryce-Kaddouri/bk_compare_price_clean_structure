@@ -28,9 +28,7 @@ class SearchProvider with ChangeNotifier {
     if (product != null) {
       setSelectedProduct(product);
       List<PriceModel> prices = product.prices;
-      for (PriceModel price in prices) {
-        print('price: ${price.supplierId}');
-      }
+
       // extract all suppliers
       List<String> suppliers = [];
       for (PriceModel price in prices) {
@@ -90,8 +88,11 @@ class SearchProvider with ChangeNotifier {
     List<PriceModel> barPrices = product.getLatestPrices();
     List<PriceModel> linePrices = product.getAllPricesOrderByDate(false);
     List<String> suppliers = [];
-
-    print('prices: ${barPrices.length}');
+    List<int> lstYears = [];
+    lstYears = linePrices.map((e) => e.dateTime.year).toSet().toList();
+    lstYears.sort((a, b) => b.compareTo(a));
+    setLstYears(lstYears);
+    setSelectedYear(lstYears[0]);
     double barMaxPrice = 20;
     double lineMaxPrice = 20;
 
@@ -107,10 +108,10 @@ class SearchProvider with ChangeNotifier {
         lineMaxPrice = price.price;
       }
     }
+
     _suppliers = suppliers;
     // arround up to the nearest 10
     lineMaxPrice = ((lineMaxPrice / 10).ceil() * 10).toDouble();
-    print('maxPrice: $lineMaxPrice');
 
     for (PriceModel price in barPrices) {
       if (price.price > barMaxPrice) {
@@ -119,12 +120,29 @@ class SearchProvider with ChangeNotifier {
     }
     // arround up to the nearest 10
     barMaxPrice = ((barMaxPrice / 10).ceil() * 10).toDouble();
-    print('maxPrice: $barMaxPrice');
     _lineMaxPrice = lineMaxPrice;
     _lineInterval = lineMaxPrice / 5;
     _barMaxPrice = barMaxPrice;
     _barInterval = barMaxPrice / 5;
     _selectedProduct = product;
+    notifyListeners();
+  }
+
+  List<int> _lstYears = [];
+
+  List<int> get lstYears => _lstYears;
+
+  void setLstYears(List<int> lstYears) {
+    _lstYears = lstYears;
+    notifyListeners();
+  }
+
+  int _selectedYear = -1;
+
+  int get selectedYear => _selectedYear;
+
+  void setSelectedYear(int year) {
+    _selectedYear = year;
     notifyListeners();
   }
 }

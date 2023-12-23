@@ -66,8 +66,6 @@ class _HomeScreenState extends State<HomeScreen> {
               title: const Text('Logout'),
               onTap: () {
                 context.read<AuthenticationProvider>().signout();
-                // Update the state of the app.
-                // ...
               },
             ),
           ],
@@ -88,50 +86,111 @@ class _HomeScreenState extends State<HomeScreen> {
               ? Container()
               : Column(
                   children: [
-                    const Text('Current Price by Supplier',
-                        style: TextStyle(
-                            fontSize: 24,
-                            decoration: TextDecoration.underline)),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    BarChartWidget(),
-                    const SizedBox(
-                      height: 60,
-                    ),
-                    const Text('Price History by Supplier',
-                        style: TextStyle(
-                            fontSize: 24,
-                            decoration: TextDecoration.underline)),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    LineChartWidget(),
-                    SizedBox(
-                      height: 100,
-                      child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          itemCount:
-                              context.read<SearchProvider>().suppliers.length,
-                          itemBuilder: (context, index) {
-                            String supplierId =
-                                context.read<SearchProvider>().suppliers[index];
-                            return Container(
-                              color: context
-                                  .read<SupplierProvider>()
-                                  .suppliers
-                                  .firstWhere(
-                                      (element) => element.id == supplierId)
-                                  .color,
-                              child: Text(context
-                                  .read<SupplierProvider>()
-                                  .suppliers
-                                  .firstWhere(
-                                      (element) => element.id == supplierId)
-                                  .name),
-                            );
-                          }),
-                    ),
+                    Container(
+                        margin: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).primaryColor,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Column(children: [
+                          const Text('Current Price by Supplier',
+                              style: TextStyle(
+                                  fontSize: 24,
+                                  decoration: TextDecoration.underline)),
+                          Padding(
+                            padding: EdgeInsets.all(10),
+                            child: BarChartWidget(),
+                          ),
+                        ])),
+                    Container(
+                        margin: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).primaryColor,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Column(children: [
+                          Row(
+                            children: [
+                              SizedBox(
+                                width: 10,
+                              ),
+                              const Expanded(
+                                  child: Text('Price History by Supplier',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          fontSize: 24,
+                                          decoration:
+                                              TextDecoration.underline))),
+                              DropdownButton(
+                                items: context
+                                    .watch<SearchProvider>()
+                                    .lstYears
+                                    .map((e) => DropdownMenuItem(
+                                          value: e,
+                                          child: Text(e.toString()),
+                                        ))
+                                    .toList(),
+                                onChanged: (value) {
+                                  context
+                                      .read<SearchProvider>()
+                                      .setSelectedYear(value!);
+                                },
+                                value: context
+                                    .watch<SearchProvider>()
+                                    .selectedYear,
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                            ],
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(10),
+                            child: LineChartWidget(),
+                          ),
+                          SizedBox(
+                            height: 50,
+                            child: ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: context
+                                    .read<SearchProvider>()
+                                    .suppliers
+                                    .length,
+                                itemBuilder: (context, index) {
+                                  String supplierId = context
+                                      .read<SearchProvider>()
+                                      .suppliers[index];
+                                  return Container(
+                                    margin: const EdgeInsets.all(5),
+                                    child: Row(children: [
+                                      Container(
+                                        height: 20,
+                                        width: 20,
+                                        decoration: BoxDecoration(
+                                          color: context
+                                              .read<SupplierProvider>()
+                                              .suppliers
+                                              .firstWhere((element) =>
+                                                  element.id == supplierId)
+                                              .color,
+                                          borderRadius:
+                                              BorderRadius.circular(5),
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        width: 5,
+                                      ),
+                                      Text(context
+                                          .read<SupplierProvider>()
+                                          .suppliers
+                                          .firstWhere((element) =>
+                                              element.id == supplierId)
+                                          .name),
+                                    ]),
+                                  );
+                                }),
+                          ),
+                        ])),
                   ],
                 )),
     );

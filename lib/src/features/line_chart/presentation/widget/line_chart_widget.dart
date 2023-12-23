@@ -17,13 +17,33 @@ class LineChartWidget extends StatefulWidget {
 class _LineChartWidgetState extends State<LineChartWidget> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 600,
-      width: 600,
-      child: LineChart(
-        lineChartData,
-        swapAnimationDuration: const Duration(milliseconds: 250),
-      ),
+    return SizedBox(
+      height: MediaQuery.of(context).size.height - 180,
+      width: MediaQuery.of(context).size.width,
+      child: context.watch<SearchProvider>().suppliers.where((element) {
+        String supplierId = element;
+        List<PriceModel> lstPrices = context
+            .watch<SearchProvider>()
+            .selectedProduct!
+            .prices
+            .where((element) => element.supplierId == supplierId)
+            .toList();
+        print('lstPrices testr: $lstPrices');
+        if (lstPrices.isEmpty) {
+          return false;
+        } else {
+          return true;
+        }
+      }).isNotEmpty
+          ? LineChart(
+              lineChartData,
+              swapAnimationDuration: const Duration(milliseconds: 250),
+            )
+          : Container(
+              child: Center(
+                child: Text('No data'),
+              ),
+            ),
     );
   }
 
@@ -33,6 +53,7 @@ class _LineChartWidgetState extends State<LineChartWidget> {
           touchTooltipData: LineTouchTooltipData(
             getTooltipItems: (List<LineBarSpot> touchedBarSpots) {
               return touchedBarSpots.map((barSpot) {
+                print('barSpot: ${barSpot.barIndex}');
                 String supplierId = context
                     .read<SearchProvider>()
                     .suppliers[barSpot.barIndex.toInt()];
@@ -40,6 +61,7 @@ class _LineChartWidgetState extends State<LineChartWidget> {
                     .read<SupplierProvider>()
                     .suppliers
                     .firstWhere((element) => element.id == supplierId);
+
                 PriceModel price = context
                     .read<SearchProvider>()
                     .selectedProduct!
@@ -47,7 +69,9 @@ class _LineChartWidgetState extends State<LineChartWidget> {
                     .firstWhere((element) =>
                         element.supplierId == supplierId &&
                         DateHelper.getDayNumberInYear(element.dateTime) ==
-                            barSpot.x.toInt());
+                            barSpot.x.toInt() &&
+                        element.dateTime.year ==
+                            context.read<SearchProvider>().selectedYear);
 
                 return LineTooltipItem(
                   supplier.name,
@@ -79,7 +103,23 @@ class _LineChartWidgetState extends State<LineChartWidget> {
         titlesData: titlesData1,
         borderData: borderData,
         lineBarsData: List.generate(
-            context.watch<SearchProvider>().suppliers.length, (index1) {
+            context.watch<SearchProvider>().suppliers.where((element) {
+              String supplierId = element;
+              List<PriceModel> lstPrices = context
+                  .watch<SearchProvider>()
+                  .selectedProduct!
+                  .prices
+                  .where((element) => element.supplierId == supplierId)
+                  .toList();
+              print('lstPrices testr: $lstPrices');
+              if (lstPrices.isEmpty) {
+                return false;
+              } else {
+                return true;
+              }
+            }).length, (index1) {
+          print('index1: $index1');
+          print('suppliers: ${context.watch<SearchProvider>().selectedYear}');
           String supplierId = context.watch<SearchProvider>().suppliers[index1];
           SupplierModel supplier = context
               .watch<SupplierProvider>()
@@ -89,13 +129,18 @@ class _LineChartWidgetState extends State<LineChartWidget> {
               .watch<SearchProvider>()
               .selectedProduct!
               .prices
-              .where((element) => element.supplierId == supplierId)
+              .where((element) =>
+                  element.supplierId == supplierId &&
+                  element.dateTime.year ==
+                      context.watch<SearchProvider>().selectedYear)
               .toList();
+
+          print('lstPrices: $lstPrices');
 
           return LineChartBarData(
             isCurved: false,
             color: supplier.color,
-            barWidth: 4,
+            barWidth: 2,
             isStrokeCapRound: true,
             dotData: FlDotData(show: true),
             belowBarData: BarAreaData(
@@ -143,9 +188,10 @@ class _LineChartWidgetState extends State<LineChartWidget> {
       );
 
   Widget leftTitleWidgets(double value, TitleMeta meta) {
-    const style = TextStyle(
+    TextStyle style = TextStyle(
       fontWeight: FontWeight.bold,
       fontSize: 14,
+      color: Theme.of(context).textTheme.titleMedium!.color,
     );
     String text = value.toString();
 
@@ -161,8 +207,9 @@ class _LineChartWidgetState extends State<LineChartWidget> {
 
   Widget bottomTitleWidgets(double value, TitleMeta meta) {
     bool isMobile = MediaQuery.of(context).size.width < 600;
-    const style = TextStyle(
+    TextStyle style = TextStyle(
       fontWeight: FontWeight.bold,
+      color: Theme.of(context).textTheme.titleMedium!.color,
       fontSize: 16,
     );
     Widget text;
